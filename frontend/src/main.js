@@ -5,6 +5,7 @@ import router from './router'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap'
 import "vue3-toastify/dist/index.css";
+import 'animate.css';
 
 const app = createApp(App)
 

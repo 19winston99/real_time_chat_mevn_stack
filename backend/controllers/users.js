@@ -6,7 +6,7 @@ import { idValidator } from '../utils/mongoose-id-validator.js'
 //GET ALL USERS FROM DB
 export const getAllUsers = async (req, res) => {
     try {
-        const users = await User.find();
+        const users = await User.find({}, '_id name lastname email');
         res.status(200).json({ status: 'ok', users: users });
     } catch (error) {
         res.json({ status: 'error', message: 'Something went wrong', devMessage: error.message });

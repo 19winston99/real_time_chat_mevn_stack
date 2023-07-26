@@ -1,52 +1,85 @@
 <script>
-import { RouterLink } from 'vue-router';
 import { toast } from "vue3-toastify";
+import axios from "axios";
 export default {
-    data() {
-        return {
-            name: '',
-            lastname: '',
-            email: '',
-            password: '',
-            confirmPassword: '',
-            image: '',
-            errorName: '',
-            errorLastname: '',
-            errorEmail: '',
-            errorPassword: '',
-            errorConfirmPassword: '',
-            errorImage: '',
+  data() {
+    return {
+      name: "",
+      lastname: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      image: "",
+      errorName: "",
+      errorLastname: "",
+      errorEmail: "",
+      errorPassword: "",
+      errorConfirmPassword: "",
+      errorImage: "",
+      animate: false,
+    };
+  },
+  methods: {
+    async register() {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      this.errorName = !this.name ? "Name required" : "";
+      this.errorLastname = !this.lastname ? "Lastname required" : "";
+      this.errorEmail = !this.email ? "Email required" : "";
+      this.errorEmail = !emailRegex.test(this.email) ? "Invalid email" : "";
+      this.errorPassword = !this.password ? "Password required" : "";
+      this.errorConfirmPassword = !this.confirmPassword
+        ? "Confirm Password required"
+        : "";
+      this.errorPassword =
+        this.password.length < 5
+          ? "Password must be at least 5 characters long"
+          : "";
+      this.errorConfirmPassword =
+        this.password != this.confirmPassword
+          ? "Password & confirm password doesn't match"
+          : "";
+      this.errorImage = !this.image ? "Image required" : "";
+      if (
+        !this.errorName &&
+        !this.errorLastname &&
+        !this.errorEmail &&
+        !this.errorPassword &&
+        !this.errorConfirmPassword &&
+        !this.errorImage
+      ) {
+        this.animate = true;
+        try {
+          const response = await axios.post("/api/auth/register", {
+            name: this.name,
+            lastname: this.lastname,
+            email: this.email,
+            password: this.password,
+            confirmPassword: this.confirmPassword
+          });
+          if (response.data.status == "ok") {
+            this.animate = false;
+            this.$refs.inputFile.value = null;
+            this.name = "";
+            this.lastname = "";
+            this.email = "";
+            this.password = "";
+            this.confirmPassword = "";
+            this.image = "";
+            this.$router.push("/login");
+          }
+        } catch (error) {
+          toast.error("Something went wrong");
+          console.log(error);
+          this.animate = false;
         }
+      }
     },
-    methods: {
-        async register() {
-            this.errorName = !this.name ? 'Name required' : '';
-            this.errorLastname = !this.lastname ? 'Lastname required' : '';
-            this.errorEmail = !this.email ? 'Email required' : '';
-            //inserire validazione email
-            this.errorPassword = !this.password ? 'Password required' : '';
-            this.errorConfirmPassword = !this.confirmPassword ? 'Confirm Password required' : '';
-            this.password = this.password.length < 5 ? 'Password must be at least 5 characters long' : '';
-            this.confirmPassword = this.password != this.confirmPassword ? 'Password & confirm password doesn\'t match' : '';
-            this.errorImage = !this.image ? 'Image required' : '';
-
-            if(!this.errorName && !this.errorLastname && !this.errorEmail && !this.errorPassword && !this.errorConfirmPassword && !this.errorImage) {
-                try {
-                    const response = await axios.post('/api/auth/register', {
-                        name: this.name,
-                        lastname: this.lastname,
-                        email: this.email,
-                        password: this.password,
-                        confirmPassword: this.confirmPassword,
-                        image: this.image
-                    });
-                } catch(error) {
-                    toast.error('Something went wrong: ' + error.message);
-                }
-            }
-        }
-    }
-}
+    onFileSelected(event) {
+      this.image = event.target.files[0];
+      console.log(this.image);
+    },
+  },
+};
 </script>
 
 
@@ -56,54 +89,104 @@ export default {
       <input
         type="text"
         id="name"
+        name="name"
         class="form-control form-control-sm"
         placeholder="Name"
         v-model="name"
+        aria-describedby="errorName"
+        :class="{ 'is-invalid': errorName, 'is-valid': name != '' }"
+        autocomplete="given-name"
       />
-      <small class="text-primary">{{ errorName }} <i class="bi bi-bug-fill"></i></small>
+      <small class="invalid-feedback" id="errorName">{{ errorName }}</small>
       <input
         type="text"
         id="lastname"
+        name="lastname"
         class="form-control form-control-sm"
         placeholder="Lastname"
         v-model="lastname"
+        aria-describedby="errorLastname"
+        :class="{ 'is-invalid': errorLastname, 'is-valid': lastname != '' }"
+        autocomplete="family-name"
       />
-      <small class="text-primary">{{ errorLastname }} <i class="bi bi-bug-fill"></i></small>
+      <small class="invalid-feedback" id="errorLastname">{{
+        errorLastname
+      }}</small>
       <input
         type="email"
         id="email"
+        name="email"
         class="form-control form-control-sm"
-        placeholder="name@example.com"
+        placeholder="email@example.com"
         v-model="email"
+        :class="{ 'is-invalid': errorEmail, 'is-valid': email != '' }"
+        aria-describedby="errorEmail"
+        autocomplete="email"
       />
-      <small class="text-primary">{{ errorEmail }} <i class="bi bi-bug-fill"></i></small>
+      <small class="invalid-feedback" id="errorEmail">{{ errorEmail }}</small>
       <input
         type="password"
         id="password"
+        name="password"
         class="form-control form-control-sm"
         placeholder="Password"
         v-model="password"
+        :class="{
+          'is-invalid': errorPassword,
+          'is-valid': password != '' && password.length > 5,
+        }"
+        aria-describedby="errorPassword"
+        autocomplete="new-password"
       />
-      <small class="text-primary">{{ errorPassword }} <i class="bi bi-bug-fill"></i></small>
+      <small class="invalid-feedback" id="errorPassword">{{
+        errorPassword
+      }}</small>
       <input
         type="password"
-        id="password"
+        id="confirmPassword"
+        name="confirmPassword"
         class="form-control form-control-sm"
         placeholder="Confirm Password"
         v-model="confirmPassword"
+        :class="{
+          'is-invalid': errorConfirmPassword,
+          'is-valid':
+            confirmPassword != '' &&
+            confirmPassword.length > 5 &&
+            confirmPassword == password,
+        }"
+        aria-describedby="errorConfirmPassword"
+        autocomplete="current-password"
       />
-      <small class="text-primary">{{ errorConfirmPassword }} <i class="bi bi-bug-fill"></i></small>
-      <input type="file" id="image" class="form-control form-control-sm"/>
-      <small class="text-primary">{{ erroFile }} <i class="bi bi-bug-fill"></i></small>
-      <button class="btn btn-sm btn-outline-success rounded-circle" @click="register">
-        <span class="material-symbols-outlined"> how_to_reg </span>
+      <small class="invalid-feedback" id="errorConfirmPassword">{{
+        errorConfirmPassword
+      }}</small>
+      <input
+        type="file"
+        id="image"
+        name="image"
+        class="form-control form-control-sm"
+        :class="{ 'is-invalid': errorImage }"
+        aria-describedby="errorImage"
+        @change="onFileSelected"
+        ref="inputFile"
+      />
+      <small class="invalid-feedback" id="errorImage">{{ errorImage }}</small>
+      <button
+        type="submit"
+        class="btn btn-sm btn-outline-success rounded-circle"
+        :class="{ 'animate__animated animate__backOutRight': animate }"
+      >
+        <span class="material-symbols-outlined"> flight </span>
       </button>
       <div class="d-flex justify-content-center align-items-center gap-2">
         <div class="line"></div>
         <p class="text-black-50 m-0">OR</p>
         <div class="line"></div>
       </div>
-      <RouterLink class="btn btn-sm btn-success" to="/login">Sign In <i class="bi bi-airplane-engines-fill"></i></RouterLink>
+      <RouterLink class="btn btn-sm btn-success" to="/login"
+        >Sign In</RouterLink
+      >
     </form>
   </div>
 </template>

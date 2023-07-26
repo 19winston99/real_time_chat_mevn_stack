@@ -12,17 +12,17 @@ import { authenticateToken } from './middlewares/auth.js';
 const app = express();
 dotenv.config();
 const PORT = process.env.PORT || 3000;
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
 app.use(helmet());
 app.use(cookieParser());
 app.use(mongoSanitize());
 app.use(cors({
     credentials: true,
-    origin: 'http://localhost:5173'
+    // origin: 'http://localhost:5173',
 }));
 
-//USERS ROUTES
+//ROUTES
 app.use('/auth', authRoutes);
 app.use('/users', authenticateToken, usersRoutes);
 
