@@ -8,7 +8,6 @@ import validator from 'email-validator';
 export const register = async (req, res) => {
 
   const data = mongoSanitize.sanitize(req.body);
-  console.log(data);
 
   if (!data.name || typeof data.name !== 'string') {
     return res.status(400).json({ status: 'error', message: 'Name field invalid' });

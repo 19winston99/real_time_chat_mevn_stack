@@ -1,12 +1,17 @@
 <script>
 import axios from "axios";
 import { toast } from "vue3-toastify";
+import SearchBar from "./SearchBar.vue";
 export default {
+  components: {
+    SearchBar,
+  },
   emits: ["userSelected"],
+  props: ["authUser"],
   data() {
     return {
       users: [],
-      authUser: null,
+      searchingUser: [],
     };
   },
   methods: {
@@ -24,27 +29,30 @@ export default {
     selectUser(user) {
       this.$emit("userSelected", user);
     },
+    searchUser(text) {
+      this.searchingUser = this.users.filter((user) => user.name.toLowerCase().startsWith(text.toLowerCase()));
+    }
   },
   async mounted() {
     await this.getUsers();
-    if (sessionStorage.getItem("user")) {
-      this.authUser = JSON.parse(sessionStorage.getItem("user"));
-    }
   },
 };
 </script>
 
 <template>
-  <div class="users-list-container">
-    <div
-      v-for="user in users"
-      :key="user._id"
-      class="user-container"
-      @click="selectUser(user)"
-      :class="{ 'd-none': user.email == authUser.email }"
-    >
-      <p class="m-0">{{ user.name }}</p>
-      <p class="m-0">{{ user.lastname }}</p>
+  <div>
+    <SearchBar @search-user="searchUser"></SearchBar>
+    <div class="users-list-container">
+      <div
+        v-for="user in searchingUser.length ? searchingUser : users"
+        :key="user._id"
+        class="user-container"
+        @click="selectUser(user)"
+        :class="{ 'd-none': user.email == authUser.email }"
+      >
+        <p class="m-0">{{ user.name }}</p>
+        <p class="m-0">{{ user.lastname }}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -88,5 +96,6 @@ export default {
 .user-container:hover {
   cursor: pointer;
   background-color: #ccc;
+  scale: 1.1;
 }
 </style>

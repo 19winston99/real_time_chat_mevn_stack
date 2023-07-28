@@ -27,7 +27,7 @@ export const updateUser = async (req, res) => {
 
     try {
         const user = await User.findByIdAndUpdate(req.params.id, mongoSanitize.sanitize(data), { new: true });
-        res.status(200).json({ status: 'ok' });
+        res.status(200).json({ status: 'ok', user: {id: user.id, name: user.name, lastname: user.lastname, email: user.email} });
     } catch (error) {
         res.status(400).json({ status: 'error', message: 'Something went wrong', devMessage: error.message });
     }

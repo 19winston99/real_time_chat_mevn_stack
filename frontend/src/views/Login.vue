@@ -1,6 +1,6 @@
 <script>
 import { toast } from "vue3-toastify";
-import axios from 'axios';
+import axios from "axios";
 export default {
   data() {
     return {
@@ -9,6 +9,7 @@ export default {
       errorEmail: "",
       errorPassword: "",
       animate: false,
+      currentUser: null,
     };
   },
   methods: {
@@ -28,8 +29,8 @@ export default {
             this.animate = false;
             this.email = "";
             this.password = "";
-            sessionStorage.setItem('user', JSON.stringify(response.data.user));
-            this.$router.push('/')
+            sessionStorage.setItem("user", JSON.stringify(response.data.user));
+            this.$router.push("/");
           }
         } catch (error) {
           this.animate = false;
@@ -64,7 +65,10 @@ export default {
         class="form-control form-control-sm"
         placeholder="Password"
         v-model="password"
-        :class="{ 'is-invalid': errorPassword, 'is-valid': password != '' && password.length > 5 }"
+        :class="{
+          'is-invalid': errorPassword,
+          'is-valid': password != '' && password.length > 5,
+        }"
         aria-describedby="errorPassword"
         autocomplete="new-password"
       />
