@@ -1,5 +1,4 @@
 import { User } from '../models/user.js';
-// import mongoose from 'mongoose';
 import mongoSanitize from 'express-mongo-sanitize';
 import { idValidator } from '../utils/mongoose-id-validator.js'
 
