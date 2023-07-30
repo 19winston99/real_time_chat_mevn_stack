@@ -16,10 +16,6 @@ export const getAllUsers = async (req, res) => {
 export const updateUser = async (req, res) => {
     const data = { ...req.body };
 
-    // if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    //     return res.status(404).json({ status: 'error', message: 'Invalid ID' });
-    // }
-
     if (!idValidator(req.params.id)) {
         return res.status(404).json({ status: 'error', message: 'Invalid ID' });
     }
@@ -34,9 +30,6 @@ export const updateUser = async (req, res) => {
 
 //DELETE USER
 export const deleteUser = async (req, res) => {
-    // if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    //     return res.status(404).json({ status: 'error', message: 'Invalid ID' });
-    // }
 
     if (!idValidator(req.params.id)) {
         return res.status(404).json({ status: 'error', message: 'Invalid ID' });

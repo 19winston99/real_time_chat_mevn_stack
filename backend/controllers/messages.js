@@ -4,38 +4,59 @@ import { idValidator } from '../utils/mongoose-id-validator.js';
 
 //GET MESSAGES
 export const getMessages = async (req, res) => {
+    const { user_id1, user_id2 } = mongoSanitize.sanitize(req.query);
+
+    if (!idValidator(user_id1) || !idValidator(user_id2)) {
+        return res.status(404).json({ status: 'error', message: 'Invalid user ID' });
+    }
+
     try {
-        const { user_id1, user_id2 } = mongoSanitize.sanitize(req.query);
-
-        if (!idValidator(user_id1) || !idValidator(user_id2)) {
-            return res.status(404).json({ status: 'error', message: 'Invalid user IDs' });
-        }
-
         const messages = await Message.find({
             $or: [
                 { sender_id: user_id1, recipient_id: user_id2 },
                 { sender_id: user_id2, recipient_id: user_id1 }
             ]
         });
-
         res.status(200).json({ status: 'ok', messages: messages });
     } catch (error) {
         res.status(500).json({ status: 'error', message: 'Something went wrong', devMessage: error.message });
     }
 };
 
-//INSERT MESSAGE
-export const insertMessage = async (req, res) => {
-    const message = new Message(mongoSanitize.sanitize(req.body));
-
-    if (!messages.sender_id || !message.recipient_id || !idValidator(message.sender_id) || !idValidator(message.recipient_id)) {
-        return res.status(404).json({ status: 'error', message: 'Invalid user IDs' });
+//GET CONVERSATIONS
+export const getConversations = async (req, res) => {
+    
+    if (!req.params.id || !idValidator(req.params.id)) {
+        return res.status(404).json({ status: 'error', message: 'Ivalid user ID' });
     }
 
-    if (!message.text && !message.image) {
+    try {
+        const conversations = await Message.find({sender_id: req.params.id}).populate('sender_id', 'name lastname email');
+        res.status(200).json({ status: 'ok', conversations: conversations });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: 'Something went wrong', devMessage: error.message });
+    }
+
+}
+
+//INSERT MESSAGE
+export const insertMessage = async (req, res) => {
+    const data = mongoSanitize.sanitize(req.body);
+
+    if (!data.sender_id || !data.recipient_id || !idValidator(data.sender_id) || !idValidator(data.recipient_id)) {
+        return res.status(404).json({ status: 'error', message: 'Invalid user ID' });
+    }
+
+    if (!data.text && !data.image) {
         return res.status(404).json({ status: 'error', message: 'At least one content is required' });
     }
 
+    const message = new Message({
+        sender_id: data.sender_id,
+        recipient_id: data.recipient_id,
+        text: data.text,
+        image: null
+    })
     try {
         await message.save();
         res.status(201).json({ status: 'ok', message: message });

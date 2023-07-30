@@ -1,10 +1,12 @@
 <script>
 import UsersList from "../components/UsersList.vue";
 import Chat from "../components/Chat.vue";
+import Conversations from '../components/UsersConversations.vue';
 export default {
   components: {
     UsersList,
     Chat,
+    Conversations
   },
   data() {
     return {
@@ -40,6 +42,7 @@ export default {
     class="container mt-3 d-flex flex-column justify-content-center align-items-center"
   >
     <UsersList @userSelected="setUserChat" :authUser="user"></UsersList>
-    <Chat :currentUserSelected="currentUserSelected"></Chat>
+    <Conversations :authUser="user"></Conversations>
+    <Chat :currentUserSelected="currentUserSelected" :authUser="user"></Chat>
   </div>
 </template>

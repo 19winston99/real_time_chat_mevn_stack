@@ -55,7 +55,7 @@ export const login = async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    return res.status(404).json({ status: 'error', message: 'Email or passowrd not valid' });
+    return res.status(404).json({ status: 'error', message: 'Email or password not valid' });
   }
   if (await bcrypt.compare(password, user.password)) {
     const token = jwt.sign({
