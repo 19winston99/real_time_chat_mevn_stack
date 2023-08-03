@@ -1,8 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 export const authenticateToken = async (req, res, next) => {
-
-    /* IF TOKEN IS PASSED BY HEADERS
+     /* IF TOKEN IS PASSED BY HEADERS
 
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];

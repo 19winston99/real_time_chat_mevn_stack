@@ -41,17 +41,17 @@ export default {
     },
   },
   mounted() {
-    if (sessionStorage.getItem("user")) {
-      this.user = JSON.parse(sessionStorage.getItem("user"));
-      this.name = this.user.name;
-      this.lastname = this.user.lastname;
-    }
+    this.user = JSON.parse(sessionStorage.getItem("user")) || null;
+    this.name = this.user.name;
+    this.lastname = this.user.lastname;
   },
   watch: {
     $route: {
       handler(newValue, oldValue) {
-        if (sessionStorage.getItem("user")) {
+        if (sessionStorage.getItem("user") && newValue != oldValue) {
           this.user = JSON.parse(sessionStorage.getItem("user"));
+          this.name = this.user.name;
+          this.lastname = this.user.lastname;
         }
       },
       deep: true, //detect changes in nested objects within sessionStorage
@@ -81,11 +81,6 @@ export default {
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <RouterLink class="nav-link active" to="/"
-                ><i class="bi bi-house-door icon"></i
-              ></RouterLink>
-            </li>
             <li class="nav-item dropdown">
               <a
                 class="nav-link dropdown-toggle"

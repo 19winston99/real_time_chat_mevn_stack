@@ -1,12 +1,12 @@
 <script>
 import UsersList from "../components/UsersList.vue";
 import Chat from "../components/Chat.vue";
-import Conversations from '../components/UsersConversations.vue';
+import Conversations from "../components/UsersConversations.vue";
 export default {
   components: {
     UsersList,
     Chat,
-    Conversations
+    Conversations,
   },
   data() {
     return {
@@ -20,29 +20,36 @@ export default {
     },
   },
   mounted() {
-    if (sessionStorage.getItem("user")) {
-      this.user = JSON.parse(sessionStorage.getItem("user"));
-    }
+      this.user = JSON.parse(sessionStorage.getItem("user")) || null;
   },
-  watch: {
-    $route: {
-      handler(newValue, oldValue) {
-        if (sessionStorage.getItem("user")) {
-          this.user = JSON.parse(sessionStorage.getItem("user"));
-        }
-      },
-      deep: true, //detect changes in nested objects within sessionStorage
-    },
-  },
+  // watch: {
+  //   $route: {
+  //     handler(newValue, oldValue) {
+  //       if (sessionStorage.getItem("user")) {
+  //         this.user = JSON.parse(sessionStorage.getItem("user"));
+  //       }
+  //     },
+  //     deep: true, //detect changes in nested objects within sessionStorage
+  //   },
+  // },
 };
 </script>
 
 <template>
-  <div
-    class="container mt-3 d-flex flex-column justify-content-center align-items-center"
-  >
-    <UsersList @userSelected="setUserChat" :authUser="user"></UsersList>
-    <Conversations :authUser="user"></Conversations>
-    <Chat :currentUserSelected="currentUserSelected" :authUser="user"></Chat>
+  <div class="d-flex justify-content-between align-items-center">
+    <div
+      class="d-flex flex-column justify-content-center align-items-center users-container"
+    >
+      <UsersList @userSelected="setUserChat"></UsersList>
+      <Conversations @userSelected="setUserChat"></Conversations>
+    </div>
+    <Chat :currentUserSelected="currentUserSelected"></Chat>
   </div>
 </template>
+
+<style>
+.users-container {
+  padding: 0.5em;
+  width: 20em;
+}
+</style>

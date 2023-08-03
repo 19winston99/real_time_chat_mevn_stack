@@ -5,13 +5,14 @@ import axios from "axios";
 import { toast } from "vue3-toastify";
 
 export default {
-  props: ["currentUserSelected", "authUser"],
+  props: ["currentUserSelected"],
   components: {
     SendMessage,
     MessagesContainer,
   },
   data() {
     return {
+      authUser: null,
       messages: [],
     };
   },
@@ -33,10 +34,15 @@ export default {
       }
     },
   },
+  mounted() {
+    this.authUser = JSON.parse(sessionStorage.getItem('user')) || null;
+  },
   watch: {
     currentUserSelected: {
       async handler(newValue, oldValue) {
-        await this.getMessages();
+        if (newValue != oldValue) {
+          await this.getMessages();
+        }
       },
       deep: true,
     },
@@ -53,18 +59,22 @@ export default {
       <p class="m-0">{{ currentUserSelected.name }}</p>
       <p class="m-0">{{ currentUserSelected.lastname }}</p>
     </div>
+    <div
+      v-else
+      class="tag-user d-flex justify-content-center align-items-center gap-1 mt-1"
+    ></div>
     <MessagesContainer :messages="messages"></MessagesContainer>
-    <SendMessage :currentUserSelected="currentUserSelected" :authUser="authUser"></SendMessage>
+    <SendMessage
+      :currentUserSelected="currentUserSelected"
+    ></SendMessage>
   </div>
 </template>
 
 <style>
 .chat-container {
-  border: 2px solid #ccc;
-  border-radius: 10px;
-  width: 75vw;
-  height: 20em;
-  overflow-y: scroll;
+  padding: 1em;
+  width: 80vw;
+  height: 30em;
 }
 
 .tag-current-user {
@@ -72,5 +82,13 @@ export default {
   width: 16em;
   margin: 0 auto;
   border-radius: 10px;
+}
+
+.tag-user {
+  border: 1px solid #ccc;
+  width: 16em;
+  margin: 0 auto;
+  border-radius: 10px;
+  height: 1.5em;
 }
 </style>

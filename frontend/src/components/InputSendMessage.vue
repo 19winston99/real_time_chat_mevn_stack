@@ -2,9 +2,10 @@
 import axios from "axios";
 import { toast } from "vue3-toastify";
 export default {
-  props: ["currentUserSelected", "authUser"],
+  props: ["currentUserSelected"],
   data() {
     return {
+      authUser: null,
       text: "",
     };
   },
@@ -18,8 +19,8 @@ export default {
           text: this.text,
         });
         if (response.data.status == "ok") {
-          this.text = '';
-          toast.success('Message sent')
+          this.text = "";
+          toast.success("Message sent");
         }
       } catch (error) {
         console.log(error);
@@ -27,6 +28,9 @@ export default {
       }
     },
   },
+  mounted() {
+    this.authUser = JSON.parse(sessionStorage.getItem('user')) || null;
+  }
 };
 </script>
 

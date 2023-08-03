@@ -7,9 +7,9 @@ export default {
     SearchBar,
   },
   emits: ["userSelected"],
-  props: ["authUser"],
   data() {
     return {
+      authUser: null,
       users: [],
       searchingUser: [],
     };
@@ -34,6 +34,7 @@ export default {
     }
   },
   async mounted() {
+    this.authUser = JSON.parse(sessionStorage.getItem('user')) || null;
     await this.getUsers();
   },
 };
