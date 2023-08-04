@@ -2,7 +2,7 @@
 import axios from "axios";
 import { toast } from "vue3-toastify";
 export default {
-  emits: ["lougout"],
+  emits: ["logout"],
   methods: {
     async logout() {
       try {
@@ -22,5 +22,5 @@ export default {
 </script>
 
 <template>
-  <li><button class="dropdown-item" @click="logout">Logout</button></li>
+  <li><button class="dropdown-item" @click="logout">Logout <i class="bi bi-door-closed-fill"></i></button></li>
 </template>

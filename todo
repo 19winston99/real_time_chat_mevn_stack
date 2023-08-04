@@ -1,5 +1,7 @@
 salvare immagine profilo
 quando viene eliminato un utente, eliminare anche la foto dalla cartella
+--------------------------------------
 schema validator per messages
 schema validator per users
-facendo il login e facendo update user rimangono i dati della sessione precedente
+
+style messaggi

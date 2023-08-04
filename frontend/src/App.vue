@@ -41,9 +41,11 @@ export default {
     },
   },
   mounted() {
-    this.user = JSON.parse(sessionStorage.getItem("user")) || null;
-    this.name = this.user.name;
-    this.lastname = this.user.lastname;
+    if (sessionStorage.getItem("user")) {
+      this.user = JSON.parse(sessionStorage.getItem("user")) || null;
+      this.name = this.user.name;
+      this.lastname = this.user.lastname;
+    }
   },
   watch: {
     $route: {
@@ -98,7 +100,7 @@ export default {
                     data-bs-toggle="modal"
                     data-bs-target="#exampleModal"
                   >
-                    Edit Profile
+                    Edit Profile <i class="bi bi-pencil-square"></i>
                   </button>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
@@ -107,6 +109,11 @@ export default {
             </li>
           </ul>
         </div>
+      </div>
+      <div v-else class="container-fluid">
+        <p class="navbar-brand m-0">
+          <i class="bi bi-wechat icon"></i> MEVN Real Time Chat App
+        </p>
       </div>
     </nav>
     <RouterView />
@@ -122,7 +129,7 @@ export default {
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="exampleModalLabel">
-              Update User Info <i class="bi bi-pen"></i>
+              Informations
             </h1>
             <button
               type="button"

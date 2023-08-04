@@ -82,6 +82,6 @@ export default {
 
 .user-conversation:hover {
   cursor: pointer;
-  background: #ccc;
+  background: #252cc525;
 }
 </style>

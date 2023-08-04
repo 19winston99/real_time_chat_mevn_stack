@@ -174,17 +174,17 @@ export default {
       <small class="invalid-feedback" id="errorImage">{{ errorImage }}</small>
       <button
         type="submit"
-        class="btn btn-sm btn-outline-success rounded-circle"
-        :class="{ 'animate__animated animate__backOutRight': animate }"
+        class="btn btn-sm btn-outline-primary rounded-circle"
+        :class="{ 'animate__animated animate__rubberBand': animate }"
       >
-        <span class="material-symbols-outlined"> flight </span>
+      <i class="bi bi-person-add"></i>
       </button>
       <div class="d-flex justify-content-center align-items-center gap-2">
         <div class="line"></div>
         <p class="text-black-50 m-0">OR</p>
         <div class="line"></div>
       </div>
-      <RouterLink class="btn btn-sm btn-success" to="/login"
+      <RouterLink class="btn btn-sm btn-primary" to="/login"
         >Sign In</RouterLink
       >
     </form>

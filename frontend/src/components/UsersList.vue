@@ -96,7 +96,7 @@ export default {
 
 .user-container:hover {
   cursor: pointer;
-  background-color: #ccc;
+  background-color: #252cc525;
   scale: 1.1;
 }
 </style>

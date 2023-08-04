@@ -1,7 +1,6 @@
 import { Message } from '../models/message.js';
 import mongoSanitize from 'express-mongo-sanitize';
 import { idValidator } from '../utils/mongoose-id-validator.js';
-import Cryptr from 'cryptr';
 
 //GET MESSAGES
 export const getMessages = async (req, res) => {
@@ -55,7 +54,6 @@ export const getConversations = async (req, res) => {
 //INSERT MESSAGE
 export const insertMessage = async (req, res) => {
     const data = mongoSanitize.sanitize(req.body);
-    const cryptr = new Cryptr(process.env.CRYPT_SECRET);
 
     if (!data.sender_id || !data.recipient_id || !idValidator(data.sender_id) || !idValidator(data.recipient_id)) {
         return res.status(404).json({ status: 'error', message: 'Invalid user ID' });
@@ -68,7 +66,7 @@ export const insertMessage = async (req, res) => {
     const message = new Message({
         sender_id: data.sender_id,
         recipient_id: data.recipient_id,
-        text: cryptr.encrypt(data.text),
+        text: data.text,
         image: null
     })
     try {
