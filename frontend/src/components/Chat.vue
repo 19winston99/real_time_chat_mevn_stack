@@ -30,12 +30,16 @@ export default {
         }
       } catch (error) {
         console.log(error);
-        toast.error("Something went wrong");
+        toast.error("Something went wrong", {
+          pauseOnHover: false,
+          theme: "dark",
+          transition: "flip",
+        });
       }
     },
   },
   mounted() {
-    this.authUser = JSON.parse(sessionStorage.getItem('user')) || null;
+    this.authUser = JSON.parse(sessionStorage.getItem("user")) || null;
   },
   watch: {
     currentUserSelected: {
@@ -64,9 +68,7 @@ export default {
       class="tag-user d-flex justify-content-center align-items-center gap-1 mt-1"
     ></div>
     <MessagesContainer :messages="messages"></MessagesContainer>
-    <SendMessage
-      :currentUserSelected="currentUserSelected"
-    ></SendMessage>
+    <SendMessage :currentUserSelected="currentUserSelected"></SendMessage>
   </div>
 </template>
 

@@ -54,7 +54,7 @@ export default {
             lastname: this.lastname,
             email: this.email,
             password: this.password,
-            confirmPassword: this.confirmPassword
+            confirmPassword: this.confirmPassword,
           });
           if (response.data.status == "ok") {
             this.animate = false;
@@ -68,7 +68,11 @@ export default {
             this.$router.push("/login");
           }
         } catch (error) {
-          toast.error("Something went wrong");
+          toast.error("Something went wrong", {
+            pauseOnHover: false,
+            theme: "dark",
+            transition: "flip",
+          });
           console.log(error);
           this.animate = false;
         }
@@ -177,7 +181,7 @@ export default {
         class="btn btn-sm btn-outline-primary rounded-circle"
         :class="{ 'animate__animated animate__rubberBand': animate }"
       >
-      <i class="bi bi-person-add"></i>
+        <i class="bi bi-person-add"></i>
       </button>
       <div class="d-flex justify-content-center align-items-center gap-2">
         <div class="line"></div>

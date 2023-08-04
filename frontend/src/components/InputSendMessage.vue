@@ -20,17 +20,25 @@ export default {
         });
         if (response.data.status == "ok") {
           this.text = "";
-          toast.success("Message sent");
+          toast.success("Message sent", {
+            pauseOnHover: false,
+            theme: "dark",
+            transition: "flip",
+          });
         }
       } catch (error) {
         console.log(error);
-        toast.error("Something went wrong");
+        toast.error("Something went wrong", {
+          pauseOnHover: false,
+          theme: "dark",
+          transition: "flip",
+        });
       }
     },
   },
   mounted() {
-    this.authUser = JSON.parse(sessionStorage.getItem('user')) || null;
-  }
+    this.authUser = JSON.parse(sessionStorage.getItem("user")) || null;
+  },
 };
 </script>
 

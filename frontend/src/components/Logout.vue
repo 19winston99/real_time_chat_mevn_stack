@@ -14,7 +14,11 @@ export default {
         }
       } catch (error) {
         console.log(error);
-        toast.error("Something went wrong");
+        toast.error("Something went wrong", {
+          pauseOnHover: false,
+          theme: "dark",
+          transition: "flip",
+        });
       }
     },
   },
@@ -22,5 +26,9 @@ export default {
 </script>
 
 <template>
-  <li><button class="dropdown-item" @click="logout">Logout <i class="bi bi-door-closed-fill"></i></button></li>
+  <li>
+    <button class="dropdown-item" @click="logout">
+      Logout <i class="bi bi-door-closed-fill"></i>
+    </button>
+  </li>
 </template>

@@ -23,18 +23,24 @@ export default {
         }
       } catch (error) {
         console.log(error);
-        toast.error("Something went wrong");
+        toast.error("Something went wrong", {
+          pauseOnHover: false,
+          theme: "dark",
+          transition: "flip",
+        });
       }
     },
     selectUser(user) {
       this.$emit("userSelected", user);
     },
     searchUser(text) {
-      this.searchingUser = this.users.filter((user) => user.name.toLowerCase().startsWith(text.toLowerCase()));
-    }
+      this.searchingUser = this.users.filter((user) =>
+        user.name.toLowerCase().startsWith(text.toLowerCase())
+      );
+    },
   },
   async mounted() {
-    this.authUser = JSON.parse(sessionStorage.getItem('user')) || null;
+    this.authUser = JSON.parse(sessionStorage.getItem("user")) || null;
     await this.getUsers();
   },
 };

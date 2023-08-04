@@ -2,7 +2,7 @@
 import axios from "axios";
 import { toast } from "vue3-toastify";
 export default {
-  emits: ['userSelected'],
+  emits: ["userSelected"],
   data() {
     return {
       conversations: [],
@@ -20,12 +20,16 @@ export default {
         }
       } catch (error) {
         console.log(error);
-        toast.error("Something went wrong");
+        toast.error("Something went wrong", {
+          pauseOnHover: false,
+          theme: "dark",
+          transition: "flip",
+        });
       }
     },
     selectUser(user) {
-      this.$emit("userSelected", user)
-    }
+      this.$emit("userSelected", user);
+    },
   },
   async mounted() {
     this.user = JSON.parse(sessionStorage.getItem("user"));
@@ -72,7 +76,6 @@ export default {
   background: #252cc525;
   border-radius: 10px;
 }
-
 
 .user-conversation {
   border-radius: 10px;

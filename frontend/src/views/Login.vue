@@ -35,7 +35,11 @@ export default {
         } catch (error) {
           this.animate = false;
           console.log(error);
-          toast.error("Something went wrong");
+          toast.error("Something went wrong", {
+            pauseOnHover: false,
+            theme: "dark",
+            transition: "flip",
+          });
         }
       }
     },
