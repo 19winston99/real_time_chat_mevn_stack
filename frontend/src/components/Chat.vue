@@ -14,6 +14,8 @@ export default {
     return {
       authUser: null,
       messages: [],
+      dynamicText: "",
+      currentLetterIndex: 0,
     };
   },
   methods: {
@@ -37,9 +39,20 @@ export default {
         });
       }
     },
+    typeIntroText() {
+      const text = ". . . Select a user to start chatting . . .";
+      if (this.currentLetterIndex < text.length) {
+        this.dynamicText += text[this.currentLetterIndex];
+        this.currentLetterIndex++;
+      } else {
+        this.dynamicText = "";
+        this.currentLetterIndex = 0;
+      }
+    },
   },
   mounted() {
     this.authUser = JSON.parse(sessionStorage.getItem("user")) || null;
+    setInterval(this.typeIntroText, 100);
   },
   watch: {
     currentUserSelected: {
@@ -55,20 +68,30 @@ export default {
 </script>
 
 <template>
-  <div class="chat-container">
+  <div class="chat-container" v-if="currentUserSelected">
     <div
-      v-if="currentUserSelected"
       class="tag-current-user d-flex justify-content-center align-items-center gap-1 mt-1"
     >
       <p class="m-0">{{ currentUserSelected.name }}</p>
       <p class="m-0">{{ currentUserSelected.lastname }}</p>
     </div>
-    <div
-      v-else
-      class="tag-user d-flex justify-content-center align-items-center gap-1 mt-1"
-    ></div>
     <MessagesContainer :messages="messages"></MessagesContainer>
     <SendMessage :currentUserSelected="currentUserSelected"></SendMessage>
+  </div>
+  <div v-else class="chat-container">
+    <div
+      class="img-container m-auto d-flex justify-content-center align-items-center flex-column mt-5"
+    >
+    <div class="text-container">
+      <p class="m-0">{{ dynamicText }}</p>
+
+    </div>
+      <img
+        src="../../public/images/setup/2.gif"
+        alt="waiting"
+        class="img-fluid"
+      />
+    </div>
   </div>
 </template>
 
@@ -86,11 +109,11 @@ export default {
   border-radius: 10px;
 }
 
-.tag-user {
-  border: 1px solid #ccc;
-  width: 16em;
-  margin: 0 auto;
-  border-radius: 10px;
-  height: 1.5em;
+.img-container {
+  width: 20em;
+}
+
+.text-container {
+  height: 2em;
 }
 </style>

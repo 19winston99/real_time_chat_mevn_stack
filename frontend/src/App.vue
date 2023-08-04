@@ -30,12 +30,20 @@ export default {
           if (response.data.status == "ok") {
             this.user = response.data.user;
             sessionStorage.setItem("user", JSON.stringify(response.data.user));
-            toast.info("Update complete");
+            toast.info("Update complete", {
+              pauseOnHover: false,
+              theme: "dark",
+              transition: "flip",
+            });
           }
         } catch (error) {
           console.log(error);
           this.updateSuccess = false;
-          toast.error("Something went wrong");
+          toast.error("Something went wrong", {
+            pauseOnHover: false,
+            theme: "dark",
+            transition: "flip",
+          });
         }
       }
     },
