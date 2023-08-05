@@ -87,7 +87,7 @@ export default {
 
     </div>
       <img
-        src="../../public/images/setup/2.gif"
+        src="../../public/images/setup/waiting.gif"
         alt="waiting"
         class="img-fluid"
       />

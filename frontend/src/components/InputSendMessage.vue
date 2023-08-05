@@ -51,6 +51,7 @@ export default {
       class="form-control"
       v-model="text"
       placeholder="Type here a message"
+      @keydown.enter="sendMessage"
     />
     <button @click="sendMessage" class="btn btn-sm btn-dark rounded-circle">
       <i class="bi bi-send-fill"></i>
