@@ -8,6 +8,7 @@ import helmet from 'helmet';
 import usersRoutes from './routes/users.js';
 import authRoutes from './routes/auth.js';
 import messagesRoutes from './routes/messages.js';
+import usersBlockedRoutes from './routes/users_blocked.js';
 import { authenticateToken } from './middlewares/auth.js';
 
 const app = express();
@@ -27,6 +28,7 @@ app.use(cors({
 app.use('/auth', authRoutes);
 app.use('/users', authenticateToken, usersRoutes);
 app.use('/messages', authenticateToken, messagesRoutes);
+app.use('/usersBlocked', authenticateToken, usersBlockedRoutes);
 
 //CONNECT TO MONGO DB
 mongoose.connect(process.env.CONNECTION_URL)
