@@ -13,7 +13,7 @@ const userBlockedSchema = mongoose.Schema({
     }
 }, { timestamps: true });
 
-export const User = mongoose.model('UserBlocked', userBlockedSchema);
+export const UserBlocked = mongoose.model('UserBlocked', userBlockedSchema);
 
 /* 
 SCHEMA VALIDATOR

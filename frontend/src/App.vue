@@ -3,8 +3,9 @@ import { RouterLink, RouterView } from "vue-router";
 import Logout from "./components/Logout.vue";
 import { toast } from "vue3-toastify";
 import axios from "axios";
+import UsersBlocked from "./components/UsersBlocked.vue";
 export default {
-  components: { Logout },
+  components: { Logout, UsersBlocked },
   data() {
     return {
       user: null,
@@ -12,6 +13,7 @@ export default {
       lastname: "",
       errorLastname: "",
       errorName: "",
+      usersBlocked: [],
     };
   },
   methods: {
@@ -45,6 +47,30 @@ export default {
             transition: "flip",
           });
         }
+      }
+    },
+    emitData(usersBlocked) {
+      this.usersBlocked = usersBlocked;
+    },
+    async unlockUser(id) {
+      if (!id) return;
+      try {
+        const response = await axios.delete("/api/usersBlocked/" + id);
+        if (response.data.status == "ok") {
+          toast.success("User successfully unlocked", {
+            pauseOnHover: false,
+            theme: "dark",
+            transition: "flip",
+          });
+          this.usersBlocked = this.usersBlocked.filter((el) => el._id !== id);
+        }
+      } catch (error) {
+        toast.error("Something went wrong", {
+          pauseOnHover: false,
+          theme: "dark",
+          transition: "flip",
+        });
+        console.log(error);
       }
     },
   },
@@ -111,6 +137,9 @@ export default {
                     Edit Profile <i class="bi bi-pencil-square"></i>
                   </button>
                 </li>
+                <li>
+                  <UsersBlocked @usersBlocked="emitData"></UsersBlocked>
+                </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li><Logout @logout="confirmLogout"></Logout></li>
               </ul>
@@ -125,7 +154,7 @@ export default {
       </div>
     </nav>
     <RouterView />
-    <!-- Modal -->
+    <!-- Edit Modal -->
     <div
       class="modal fade"
       id="exampleModal"
@@ -181,6 +210,57 @@ export default {
               @click="updateUser"
             >
               Save changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Users Blocked Modal -->
+    <div
+      class="modal fade"
+      id="usersBlocked"
+      tabindex="-1"
+      aria-labelledby="usersBlockedLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="usersBlockedLabel">
+              Unlock User <i class="bi bi-unlock-fill"></i>
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div
+              class="d-flex align-items-center justify-content-between mb-2"
+              v-for="userBlocked in usersBlocked"
+              :key="userBlocked._id"
+            >
+              <p class="m-0">
+                {{ userBlocked.blocked_user_id.name }}
+                {{ userBlocked.blocked_user_id.lastname }}
+              </p>
+              <button
+                class="btn btn-sm rounded-circle btn-outline-primary"
+                @click="unlockUser(userBlocked._id)"
+              >
+                <i class="bi bi-unlock-fill"></i>
+              </button>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-sm btn-danger"
+              data-bs-dismiss="modal"
+            >
+              Close
             </button>
           </div>
         </div>

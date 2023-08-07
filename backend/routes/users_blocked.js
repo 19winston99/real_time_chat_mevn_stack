@@ -1,5 +1,5 @@
 import express from 'express';
-import { deleteUserBlocked, getUsersBlocked, insertUserBlocked } from '../controllers/users_blocked';
+import { deleteUserBlocked, getUsersBlocked, insertUserBlocked } from '../controllers/users_blocked.js';
 
 const router = express.Router();
 

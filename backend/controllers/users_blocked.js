@@ -1,4 +1,4 @@
-import { User, UserBlocked } from '../models/user_blocked.js';
+import { UserBlocked } from '../models/user_blocked.js';
 import mongoSanitize from 'express-mongo-sanitize';
 import { idValidator } from '../utils/mongoose-id-validator.js';
 
@@ -20,12 +20,12 @@ export const getUsersBlocked = async (req, res) => {
 export const insertUserBlocked = async (req, res) => {
     const data = mongoSanitize.sanitize(req.body);
 
-    if (!data.blocking_user_id || !data.blocked_user_id || !idValidator(data.blocking_user_id) || !idValidator(data.blocked_user_id)) {
+    if (!data.blocking_user_id || !data.blocked_user_id || !idValidator(data.blocking_user_id) || !idValidator(data.blocked_user_id) || (data.blocking_user_id == data.blocked_user_id)) {
         return res.status(404).json({ status: 'error', message: 'Invalid user ID' });
     }
 
     const userBlocked = new UserBlocked({
-        blocking_user_id: data.blocked_user_id,
+        blocking_user_id: data.blocking_user_id,
         blocked_user_id: data.blocked_user_id
     });
 

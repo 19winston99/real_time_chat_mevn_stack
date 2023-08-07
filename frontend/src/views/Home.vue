@@ -2,6 +2,8 @@
 import UsersList from "../components/UsersList.vue";
 import Chat from "../components/Chat.vue";
 import Conversations from "../components/UsersConversations.vue";
+import { toast } from "vue3-toastify";
+import axios from "axios";
 export default {
   components: {
     UsersList,
@@ -18,9 +20,32 @@ export default {
     setUserChat(user) {
       this.currentUserSelected = user;
     },
+    async blockUser(id) {
+      if (!id || !this.user.id) return;
+      try {
+        const response = await axios.post("/api/usersBlocked/", {
+          blocking_user_id: this.user.id,
+          blocked_user_id: id,
+        });
+        if (response.data.status == "ok") {
+          toast.success("User locked out successfully", {
+            pauseOnHover: false,
+            theme: "dark",
+            transition: "flip",
+          });
+        }
+      } catch (error) {
+        toast.error("Something went wrong", {
+          pauseOnHover: false,
+          theme: "dark",
+          transition: "flip",
+        });
+        console.log(error);
+      }
+    },
   },
   mounted() {
-      this.user = JSON.parse(sessionStorage.getItem("user")) || null;
+    this.user = JSON.parse(sessionStorage.getItem("user")) || null;
   },
   // watch: {
   //   $route: {
@@ -41,7 +66,10 @@ export default {
       class="d-flex flex-column justify-content-center align-items-center users-container"
     >
       <UsersList @userSelected="setUserChat"></UsersList>
-      <Conversations @userSelected="setUserChat"></Conversations>
+      <Conversations
+        @userSelected="setUserChat"
+        @emitBlockUser="blockUser"
+      ></Conversations>
     </div>
     <Chat :currentUserSelected="currentUserSelected"></Chat>
   </div>

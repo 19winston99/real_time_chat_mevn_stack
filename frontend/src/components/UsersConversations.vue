@@ -2,7 +2,7 @@
 import axios from "axios";
 import { toast } from "vue3-toastify";
 export default {
-  emits: ["userSelected"],
+  emits: ["userSelected", "emitBlockUser"],
   data() {
     return {
       conversations: [],
@@ -30,9 +30,12 @@ export default {
     selectUser(user) {
       this.$emit("userSelected", user);
     },
+    blockUser(id) {
+      this.$emit("emitBlockUser", id);
+    },
   },
   async mounted() {
-    this.user = JSON.parse(sessionStorage.getItem("user"));
+    this.user = JSON.parse(sessionStorage.getItem("user")) || null;
     await this.getConversations();
   },
 };
@@ -41,13 +44,25 @@ export default {
 <template>
   <div class="conversation-container d-flex gap-1 flex-column">
     <div
+      class="d-flex justify-content-between align-items-center gap-1"
       v-for="conversation in conversations"
       :key="conversation._id"
-      class="d-flex justify-content-center align-items-center gap-1 user-conversation"
-      @click="selectUser(conversation.recipient_id)"
     >
-      <p class="m-0">{{ conversation.recipient_id.name }}</p>
-      <p class="m-0">{{ conversation.recipient_id.lastname }}</p>
+      <div
+        class="user-conversation"
+        @click="selectUser(conversation.recipient_id)"
+      >
+        <p class="m-0">
+          {{ conversation.recipient_id.name }}
+          {{ conversation.recipient_id.lastname }}
+        </p>
+      </div>
+      <button
+        class="btn btn-sm btn-outline-dark rounded-circle"
+        @click="blockUser(conversation.recipient_id._id)"
+      >
+        <i class="bi bi-person-fill-lock"></i>
+      </button>
     </div>
   </div>
 </template>

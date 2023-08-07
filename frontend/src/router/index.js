@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Register from '../views/Register.vue';
 import Login from '../views/Login.vue';
 import Home from '../views/Home.vue';
-
+import NotFound from '../views/NotFound.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -23,6 +23,11 @@ const router = createRouter({
       name: 'home',
       component: Home,
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/:catchAll(.*)',
+      name: 'notFound',
+      component: NotFound
     }
   ]
 });
