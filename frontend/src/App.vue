@@ -3,9 +3,8 @@ import { RouterLink, RouterView } from "vue-router";
 import Logout from "./components/Logout.vue";
 import { toast } from "vue3-toastify";
 import axios from "axios";
-import UsersBlocked from "./components/UsersBlocked.vue";
 export default {
-  components: { Logout, UsersBlocked },
+  components: { Logout },
   data() {
     return {
       user: null,
@@ -49,8 +48,20 @@ export default {
         }
       }
     },
-    emitData(usersBlocked) {
-      this.usersBlocked = usersBlocked;
+    async getUsersBlocked() {
+      try {
+        const response = await axios.get("/api/usersBlocked/" + this.user.id);
+        if (response.data.status == "ok") {
+          this.usersBlocked = response.data.usersBlocked;
+        }
+      } catch (error) {
+        toast.error("Something went wrong", {
+          pauseOnHover: false,
+          theme: "dark",
+          transition: "flip",
+        });
+        console.log(error);
+      }
     },
     async unlockUser(id) {
       if (!id) return;
@@ -74,12 +85,13 @@ export default {
       }
     },
   },
-  mounted() {
+  async mounted() {
     if (sessionStorage.getItem("user")) {
       this.user = JSON.parse(sessionStorage.getItem("user")) || null;
       this.name = this.user.name;
       this.lastname = this.user.lastname;
     }
+    await this.getUsersBlocked();
   },
   watch: {
     $route: {
@@ -92,6 +104,15 @@ export default {
       },
       deep: true, //detect changes in nested objects within sessionStorage
     },
+    // eventBus: {
+    //     handler: function(eventBus) {
+    //       this.eventBus.on('blockUser', (userBlocked) => {
+    //         console.log('ok')
+    //         this.usersBlocked.push(userBlocked);
+    //       });
+    //     },
+    //     // immediate: true // Esegui subito quando il componente viene montato
+    //   }
   },
 };
 </script>
@@ -138,7 +159,15 @@ export default {
                   </button>
                 </li>
                 <li>
-                  <UsersBlocked @usersBlocked="emitData"></UsersBlocked>
+                  <button
+                  @click="getUsersBlocked"
+                    type="button"
+                    class="dropdown-item"
+                    data-bs-toggle="modal"
+                    data-bs-target="#usersBlocked"
+                  >
+                    Users Blocked <i class="bi bi-person-fill-lock"></i>
+                  </button>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li><Logout @logout="confirmLogout"></Logout></li>

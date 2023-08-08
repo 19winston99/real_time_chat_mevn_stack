@@ -2,7 +2,7 @@
 import axios from "axios";
 import { toast } from "vue3-toastify";
 export default {
-  emits: ["userSelected", "emitBlockUser"],
+  emits: ["userSelected"],
   data() {
     return {
       conversations: [],
@@ -30,8 +30,28 @@ export default {
     selectUser(user) {
       this.$emit("userSelected", user);
     },
-    blockUser(id) {
-      this.$emit("emitBlockUser", id);
+    async blockUser(blockUser) {
+      if (!blockUser || !this.user.id) return;
+      try {
+        const response = await axios.post("/api/usersBlocked/", {
+          blocking_user_id: this.user.id,
+          blocked_user_id: blockUser._id,
+        });
+        if (response.data.status == "ok") {
+          toast.success("User locked out successfully", {
+            pauseOnHover: false,
+            theme: "dark",
+            transition: "flip",
+          });
+        }
+      } catch (error) {
+        toast.error("Something went wrong", {
+          pauseOnHover: false,
+          theme: "dark",
+          transition: "flip",
+        });
+        console.log(error);
+      }
     },
   },
   async mounted() {
@@ -59,7 +79,7 @@ export default {
       </div>
       <button
         class="btn btn-sm btn-outline-dark rounded-circle"
-        @click="blockUser(conversation.recipient_id._id)"
+        @click="blockUser(conversation.recipient_id)"
       >
         <i class="bi bi-person-fill-lock"></i>
       </button>
