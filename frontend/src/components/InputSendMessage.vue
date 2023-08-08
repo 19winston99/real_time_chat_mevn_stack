@@ -3,10 +3,106 @@ import axios from "axios";
 import { toast } from "vue3-toastify";
 export default {
   props: ["currentUserSelected"],
+  emits: ['messageSent'],
   data() {
     return {
       authUser: null,
       text: "",
+       emoticons: [
+        "❤",
+        "😀",
+        "😁",
+        "😂",
+        "🤣",
+        "😃",
+        "😄",
+        "😅",
+        "😆",
+        "😉",
+        "😊",
+        "😋",
+        "😎",
+        "😍",
+        "😘",
+        "😗",
+        "😙",
+        "😚",
+        "🙂",
+        "🤗",
+        "🤩",
+        "🤔",
+        "🤨",
+        "😐",
+        "😑",
+        "😶",
+        "🙄",
+        "😏",
+        "😣",
+        "😥",
+        "😮",
+        "🤐",
+        "😯",
+        "😪",
+        "😫",
+        "😴",
+        "😌",
+        "😛",
+        "😜",
+        "😝",
+        "🤤",
+        "😒",
+        "😓",
+        "😔",
+        "😕",
+        "🙃",
+        "🤑",
+        "😲",
+        "☹",
+        "🙁",
+        "😖",
+        "😞",
+        "😟",
+        "😤",
+        "😢",
+        "😭",
+        "😦",
+        "😧",
+        "😨",
+        "😩",
+        "🤯",
+        "😬",
+        "😰",
+        "😱",
+        "😳",
+        "🤪",
+        "😵",
+        "😡",
+        "😠",
+        "🤬",
+        "😷",
+        "🤒",
+        "🤕",
+        "🤢",
+        "🤮",
+        "🤧",
+        "😇",
+        "🤠",
+        "🤡",
+        "🤥",
+        "🤫",
+        "🤭",
+        "🧐",
+        "🤓",
+        "😈",
+        "👿",
+        "👹",
+        "👺",
+        "💀",
+        "👻",
+        "👽",
+        "🤖",
+        "💩",
+      ],
     };
   },
   methods: {
@@ -25,6 +121,7 @@ export default {
             theme: "dark",
             transition: "flip",
           });
+          this.$emit('messageSent', response.data.message)
         }
       } catch (error) {
         console.log(error);
@@ -34,6 +131,10 @@ export default {
           transition: "flip",
         });
       }
+    },
+      insertEmoticon(emoticon, event) {
+      this.text += emoticon;
+      event.stopPropagation();
     },
   },
   mounted() {
@@ -46,6 +147,26 @@ export default {
   <div
     class="d-flex justify-content-center align-items-center gap-1 send-message-container"
   >
+      <div class="btn-group dropup">
+      <button
+        class="btn btn-sm btn-dark rounded-2 btn-sm dropdown-toggle"
+        type="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        <i class="bi bi-emoji-smile-fill"></i>
+      </button>
+      <ul class="dropdown-menu drop-menu">
+        <li
+          v-for="emoticon in emoticons"
+          class="dropdown-item drop-item"
+          @click="insertEmoticon(emoticon, $event)"
+          :key="emoticon.key"
+        >
+          {{ emoticon }}
+        </li>
+      </ul>
+    </div>
     <input
       type="text"
       class="form-control"
@@ -64,4 +185,34 @@ export default {
   width: 25em;
   margin: 0 auto;
 }
+
+.drop-menu {
+  height: 10em;
+  overflow-y: scroll;
+}
+
+.drop-menu::-webkit-scrollbar {
+  width: 12px;
+}
+
+.dropdown-item:hover {
+  cursor: pointer;
+}
+
+.drop-item {
+  outline: none;
+  user-select: none;
+}
+
+.drop-menu::-webkit-scrollbar-track {
+  background: #ccc;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+}
+
+.drop-menu::-webkit-scrollbar-thumb {
+  background: #252cc525;
+  border-radius: 10px;
+}
+
 </style>

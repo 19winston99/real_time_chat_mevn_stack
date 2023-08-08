@@ -102,7 +102,7 @@ export const deleteMessage = async (req, res) => {
 
     try {
         await Message.findByIdAndDelete(req.params.id);
-        return res.status(200).json({ status: 'ok' });
+        res.status(200).json({ status: 'ok' });
     } catch (error) {
         res.status(404).json({ status: 'error', message: error.message });
     }

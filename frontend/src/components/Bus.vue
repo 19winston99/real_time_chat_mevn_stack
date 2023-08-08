@@ -1,12 +1,12 @@
 <script>
-import axios from "axios";
 import { toast } from "vue3-toastify";
+import axios from "axios";
 export default {
-    emits: ['usersBlocked'],
+  emits: ["getUsersBlocked"],
+  props: ['newUserBlocked'],
   data() {
     return {
       user: null,
-      usersBlocked: [],
     };
   },
   methods: {
@@ -14,7 +14,7 @@ export default {
       try {
         const response = await axios.get("/api/usersBlocked/" + this.user.id);
         if (response.data.status == "ok") {
-          this.usersBlocked = response.data.usersBlocked;
+          this.$emit("getUsersBlocked", response.data.usersBlocked);
         }
       } catch (error) {
         toast.error("Something went wrong", {
@@ -25,8 +25,14 @@ export default {
         console.log(error);
       }
     },
-    emitData() {
-        this.$emit('usersBlocked', this.usersBlocked);
+  },
+  watch: {
+    newUserBlocked: {
+        async handler(newValue, oldValue) {
+            if(newValue != oldValue)  {
+                await this.getUsersBlocked()
+            }
+        }
     }
   },
   async mounted() {
@@ -35,21 +41,6 @@ export default {
   },
 };
 </script>
-
 <template>
-  <div>
-    <!-- Button trigger modal -->
-    <button
-    @click="emitData"
-      type="button"
-      class="dropdown-item"
-      data-bs-toggle="modal"
-      data-bs-target="#usersBlocked"
-    >
-      Users Blocked <i class="bi bi-person-fill-lock"></i>
-    </button>
-
-    <!-- Modal -->
-    
-  </div>
+  <div></div>
 </template>

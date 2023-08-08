@@ -7,6 +7,7 @@ export default {
     SearchBar,
   },
   emits: ["userSelected"],
+  props: ["usersBlocked"],
   data() {
     return {
       authUser: null,
@@ -38,6 +39,11 @@ export default {
         user.name.toLowerCase().startsWith(text.toLowerCase())
       );
     },
+    isUserBlocked(user) {
+      return this.usersBlocked.some(
+        (blockedUser) => blockedUser.blocked_user_id._id === user._id
+      );
+    },
   },
   async mounted() {
     this.authUser = JSON.parse(sessionStorage.getItem("user")) || null;
@@ -55,7 +61,10 @@ export default {
         :key="user._id"
         class="user-container"
         @click="selectUser(user)"
-        :class="{ 'd-none': user.email == authUser.email }"
+        :class="{
+          'd-none': user.email == authUser.email,
+          'blocked-user': isUserBlocked(user),
+        }"
       >
         <p class="m-0">{{ user.name }}</p>
         <p class="m-0">{{ user.lastname }}</p>
@@ -104,5 +113,10 @@ export default {
   cursor: pointer;
   background-color: #252cc525;
   scale: 1.1;
+}
+
+.blocked-user {
+  opacity: 0.5; /* Riduci l'opacità per indicare che l'utente è bloccato */
+  pointer-events: none; /* Impedisce interazioni con utenti bloccati */
 }
 </style>

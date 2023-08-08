@@ -2,12 +2,19 @@
 import axios from "axios";
 import { toast } from "vue3-toastify";
 export default {
-  emits: ["userSelected", "emitBlockUser"],
+  emits: ["userSelected", 'getUsersBlocked'],
+  inject: ['eventBus'],
   data() {
     return {
       conversations: [],
       user: null,
+      usersBlocked: [],
     };
+  },
+  created() {
+    this.eventBus.on('userUnlocked', (param) => {
+      this.getUsersBlocked();
+    })
   },
   methods: {
     async getConversations() {
@@ -27,16 +34,60 @@ export default {
         });
       }
     },
+    isUserBlocked(user) {
+      return this.usersBlocked.some(
+        (blockedUser) => blockedUser.blocked_user_id._id === user._id
+      );
+    },
+    async getUsersBlocked() {
+      try {
+        const response = await axios.get("/api/usersBlocked/" + this.user.id);
+        if (response.data.status == "ok") {
+          this.usersBlocked = response.data.usersBlocked;
+          this.$emit('getUsersBlocked', response.data.usersBlocked);
+        }
+      } catch (error) {
+        toast.error("Something went wrong", {
+          pauseOnHover: false,
+          theme: "dark",
+          transition: "flip",
+        });
+        console.log(error);
+      }
+    },
     selectUser(user) {
       this.$emit("userSelected", user);
     },
-    blockUser(id) {
-      this.$emit("emitBlockUser", id);
+    async blockUser(blockUser) {
+      if (!blockUser || !this.user.id) return;
+      try {
+        const response = await axios.post("/api/usersBlocked/", {
+          blocking_user_id: this.user.id,
+          blocked_user_id: blockUser._id,
+        });
+        if (response.data.status == "ok") {
+          toast.success("User locked out successfully", {
+            pauseOnHover: false,
+            theme: "dark",
+            transition: "flip",
+          });
+          this.getUsersBlocked();
+          this.eventBus.emit('userBlocked', blockUser);
+        }
+      } catch (error) {
+        toast.error("Something went wrong", {
+          pauseOnHover: false,
+          theme: "dark",
+          transition: "flip",
+        });
+        console.log(error);
+      }
     },
   },
   async mounted() {
     this.user = JSON.parse(sessionStorage.getItem("user")) || null;
     await this.getConversations();
+    await this.getUsersBlocked();
   },
 };
 </script>
@@ -51,6 +102,7 @@ export default {
       <div
         class="user-conversation"
         @click="selectUser(conversation.recipient_id)"
+        :class="{ 'blocked-user': isUserBlocked(conversation.recipient_id) }"
       >
         <p class="m-0">
           {{ conversation.recipient_id.name }}
@@ -58,8 +110,9 @@ export default {
         </p>
       </div>
       <button
+        v-if="!isUserBlocked(conversation.recipient_id)"
         class="btn btn-sm btn-outline-dark rounded-circle"
-        @click="blockUser(conversation.recipient_id._id)"
+        @click="blockUser(conversation.recipient_id)"
       >
         <i class="bi bi-person-fill-lock"></i>
       </button>
@@ -101,5 +154,10 @@ export default {
 .user-conversation:hover {
   cursor: pointer;
   background: #252cc525;
+}
+
+.blocked-user {
+  opacity: 0.5; /* Riduci l'opacità per indicare che l'utente è bloccato */
+  pointer-events: none; /* Impedisce interazioni con utenti bloccati */
 }
 </style>

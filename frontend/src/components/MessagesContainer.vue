@@ -1,10 +1,26 @@
 <script>
+import axios from 'axios';
 export default {
   props: ["messages"],
+  emits: ["deleteMessage", 'updateMessage'],
   data() {
     return {
       user: null,
+      messageText: '',
+      messageId: '',
     };
+  },
+  methods: {
+    emitDeleteMessage(id) {
+      this.$emit("deleteMessage", id);
+    },
+    emitUpdateMessage() {
+      this.$emit('updateMessage', this.messageText, this.messageId);
+    },
+    setValueMessage(id, text) {
+      this.messageText = text;
+      this.messageId = id;
+    },
   },
   mounted() {
     this.user = JSON.parse(sessionStorage.getItem("user")) || null;
@@ -31,6 +47,63 @@ export default {
       </div>
       <div v-if="message.text != null" class="d-flex align-items-center">
         <p class="mt-1 mb-1 me-0 ms-0 text-message">{{ message.text }}</p>
+        <button
+          v-if="message.sender_id == user.id"
+          class="btn btn-sm button"
+          @click="emitDeleteMessage(message._id)"
+        >
+          <i class="bi bi-trash trash"></i>
+        </button>
+        <!-- Button trigger modal -->
+        <button
+          v-if="message.sender_id == user.id"
+          type="button"
+          class="btn btn-sm button"
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal1"
+          @click="setValueMessage(message._id, message.text)"
+        >
+          <i class="bi bi-pencil trash"></i>
+        </button>
+      </div>
+    </div>
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="exampleModal1"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">
+              <i class="bi bi-chat-left-dots-fill"></i> Edit Message
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <input class="form-control form-control-sm" v-model="messageText">
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-sm btn-dark"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="button" class="btn btn-sm btn-primary" @click="emitUpdateMessage">
+              Save changes
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -108,5 +181,16 @@ export default {
 .text-message {
   text-align: start;
   background-color: #252cc525;
+}
+
+.button {
+  border: none !important;
+  min-width: 0.5em !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.trash:hover {
+  border: 1px solid #252525;
 }
 </style>

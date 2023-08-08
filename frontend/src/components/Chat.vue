@@ -39,6 +39,41 @@ export default {
         });
       }
     },
+    async deleteMessage(id) {
+      if (!id) return;
+      try {
+        const response = await axios.delete("/api/messages/" + id);
+        if (response.data.status == "ok") {
+          this.messages = this.messages.filter((el) => el._id !== id);
+        }
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Something went wrong", {
+          pauseOnHover: false,
+          theme: "dark",
+          transition: "flip",
+        });
+      }
+    },
+    async updateMessage(messageText, messageId) {
+      if (!messageText || !messageId) return;
+      try {
+        const response = await axios.patch("/api/messages/" + messageId, {
+          text: messageText,
+        });
+        if (response.data.status == "ok") {
+          const editedMessageIndex = this.messages.findIndex(
+            (message) => message._id === messageId
+          );
+          if (editedMessageIndex !== -1) {
+            // Update the text of the edited message in the messages array
+            this.messages[editedMessageIndex].text = messageText;
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
     typeIntroText() {
       const text = ". . . Select a user to start chatting . . .";
       if (this.currentLetterIndex < text.length) {
@@ -48,6 +83,9 @@ export default {
         this.dynamicText = "";
         this.currentLetterIndex = 0;
       }
+    },
+    setNewMessage(message) {
+      this.messages.push(message);
     },
   },
   mounted() {
@@ -75,22 +113,24 @@ export default {
       <p class="m-0">{{ currentUserSelected.name }}</p>
       <p class="m-0">{{ currentUserSelected.lastname }}</p>
     </div>
-    <MessagesContainer :messages="messages"></MessagesContainer>
-    <SendMessage :currentUserSelected="currentUserSelected"></SendMessage>
+    <MessagesContainer
+      :messages="messages"
+      @deleteMessage="deleteMessage"
+      @updateMessage="updateMessage"
+    ></MessagesContainer>
+    <SendMessage
+      :currentUserSelected="currentUserSelected"
+      @messageSent="setNewMessage"
+    ></SendMessage>
   </div>
   <div v-else class="chat-container">
     <div
       class="img-container m-auto d-flex justify-content-center align-items-center flex-column mt-5"
     >
-    <div class="text-container">
-      <p class="m-0">{{ dynamicText }}</p>
-
-    </div>
-      <img
-        src="images/setup/waiting.gif"
-        alt="waiting"
-        class="img-fluid"
-      />
+      <div class="text-container">
+        <p class="m-0">{{ dynamicText }}</p>
+      </div>
+      <img src="images/setup/waiting.gif" alt="waiting" class="img-fluid" />
     </div>
   </div>
 </template>
