@@ -96,6 +96,7 @@ export default {
     } else {
       this.$router.push('/login')
     }
+    await this.getUsersBlocked();
   },
   watch: {
     $route: {
@@ -108,6 +109,15 @@ export default {
       },
       deep: true, //detect changes in nested objects within sessionStorage
     },
+    // eventBus: {
+    //     handler: function(eventBus) {
+    //       this.eventBus.on('blockUser', (userBlocked) => {
+    //         console.log('ok')
+    //         this.usersBlocked.push(userBlocked);
+    //       });
+    //     },
+    //     // immediate: true // Esegui subito quando il componente viene montato
+    //   }
   },
 };
 </script>
