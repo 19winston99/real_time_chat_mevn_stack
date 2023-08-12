@@ -3,9 +3,9 @@ import SendMessage from "./InputSendMessage.vue";
 import MessagesContainer from "./MessagesContainer.vue";
 import axios from "axios";
 import { toast } from "vue3-toastify";
-
 export default {
   props: ["currentUserSelected"],
+  inject: ["eventBus"],
   components: {
     SendMessage,
     MessagesContainer,
@@ -16,10 +16,13 @@ export default {
       messages: [],
       dynamicText: "",
       currentLetterIndex: 0,
+      blockedUserId: null,
+      loading: true,
     };
   },
   methods: {
     async getMessages() {
+      this.loading = true;
       try {
         const response = await axios.get(
           "/api/messages/?user_id1=" +
@@ -29,6 +32,7 @@ export default {
         );
         if (response.data.status == "ok") {
           this.messages = response.data.messages;
+          this.loading = false;
         }
       } catch (error) {
         console.log(error);
@@ -92,6 +96,14 @@ export default {
     this.authUser = JSON.parse(sessionStorage.getItem("user")) || null;
     setInterval(this.typeIntroText, 100);
   },
+  created() {
+    this.eventBus.on("userBlocked", (blocked) => {
+      this.blockedUserId = blocked;
+    });
+    this.eventBus.on("userUnlocked", (unlocked) => {
+      this.blockedUserId = null;
+    });
+  },
   watch: {
     currentUserSelected: {
       async handler(newValue, oldValue) {
@@ -110,16 +122,24 @@ export default {
     <div
       class="tag-current-user d-flex justify-content-center align-items-center gap-1 mt-1"
     >
-    <img :src="'images/users/' + currentUserSelected.image" alt="user-image" class="userSelected-image">
+      <img
+        :src="'images/users/' + currentUserSelected.image"
+        alt="user-image"
+        class="userSelected-image"
+      />
       <p class="m-0">{{ currentUserSelected.name }}</p>
       <p class="m-0">{{ currentUserSelected.lastname }}</p>
     </div>
     <MessagesContainer
+      :loading="loading"
       :messages="messages"
       @deleteMessage="deleteMessage"
       @updateMessage="updateMessage"
     ></MessagesContainer>
     <SendMessage
+      v-if="
+        blockedUserId == null || currentUserSelected._id !== blockedUserId._id
+      "
       :currentUserSelected="currentUserSelected"
       @messageSent="setNewMessage"
     ></SendMessage>
@@ -148,7 +168,7 @@ export default {
   width: 16em;
   margin: 0 auto;
   border-radius: 10px;
-  padding: .3em;
+  padding: 0.3em;
 }
 
 .img-container {

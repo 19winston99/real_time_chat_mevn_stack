@@ -10,7 +10,6 @@ export default {
         if (response) {
           sessionStorage.clear();
           this.$emit("logout");
-          this.$router.push("/login");
         }
       } catch (error) {
         console.log(error);

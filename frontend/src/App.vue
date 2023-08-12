@@ -11,6 +11,7 @@ export default {
       user: null,
       name: "",
       lastname: "",
+      image: "",
       errorLastname: "",
       errorName: "",
       usersBlocked: [],
@@ -19,16 +20,23 @@ export default {
   methods: {
     confirmLogout() {
       this.user = null;
+      this.$router.push("/login");
     },
     async updateUser() {
       this.errorName = !this.name ? "Name required" : "";
       this.errorLastname = !this.lastname ? "Lastname required" : "";
       if (!this.errorName && !this.errorLastname) {
         try {
-          const response = await axios.patch("/api/users/" + this.user.id, {
-            name: this.name,
-            lastname: this.lastname,
-          });
+          const formData = new FormData();
+          formData.append("name", this.name);
+          formData.append("lastname", this.lastname);
+          if (this.image) {
+            formData.append("image", this.image);
+          }
+          const response = await axios.patch(
+            "/api/users/" + this.user.id,
+            formData
+          );
           if (response.data.status == "ok") {
             this.user = response.data.user;
             sessionStorage.setItem("user", JSON.stringify(response.data.user));
@@ -86,6 +94,9 @@ export default {
         console.log(error);
       }
     },
+    onFileSelected(event) {
+      this.image = event.target.files[0];
+    },
   },
   async mounted() {
     if (sessionStorage.getItem("user")) {
@@ -107,7 +118,7 @@ export default {
         }
       },
       deep: true, //detect changes in nested objects within sessionStorage
-    }
+    },
   },
 };
 </script>
@@ -119,7 +130,11 @@ export default {
       data-bs-theme="dark"
     >
       <div class="container-fluid" v-if="user != null">
-        <img :src="'images/users/' + user.image" class="user-image me-2" alt="user-image"/>
+        <img
+          :src="'images/users/' + user.image"
+          class="user-image me-2"
+          alt="user-image"
+        />
         <a class="navbar-brand">{{ user.name }} {{ user.lastname }}</a>
         <button
           class="navbar-toggler"
@@ -201,7 +216,7 @@ export default {
             ></button>
           </div>
           <div class="modal-body d-flex flex-column gap-1">
-            <label for="name">Name</label>
+            <label for="name" class="form-label">Name</label>
             <input
               type="text"
               class="form-control form-control-sm"
@@ -209,7 +224,7 @@ export default {
               :class="{ 'is-invalid': errorName, 'is-valid': name != '' }"
               v-model="name"
             />
-            <label for="lastname">Lastname</label>
+            <label for="lastname" class="form-label">Lastname</label>
             <input
               type="text"
               class="form-control form-control-sm"
@@ -219,6 +234,12 @@ export default {
                 'is-valid': lastname != '',
               }"
               id="lastname"
+            />
+            <label for="image">Image Picture</label>
+            <input
+              type="file"
+              class="form-control form-control-sm"
+              @change="onFileSelected"
             />
           </div>
           <div class="modal-footer">

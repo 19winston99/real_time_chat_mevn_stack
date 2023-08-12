@@ -13,14 +13,17 @@ export default {
       authUser: null,
       users: [],
       searchingUser: [],
+      loading: true,
     };
   },
   methods: {
     async getUsers() {
+      this.loading = true;
       try {
         const response = await axios.get("/api/users/");
         if (response.data.status == "ok") {
           this.users = response.data.users;
+          this.loading = false;
         }
       } catch (error) {
         console.log(error);
@@ -55,7 +58,20 @@ export default {
 <template>
   <div>
     <SearchBar @search-user="searchUser"></SearchBar>
-    <div class="users-list-container">
+    <div v-if="loading" class="card m-1" aria-hidden="true">
+      <div class="card-body">
+        <h5 class="card-title placeholder-glow">
+          <span class="placeholder col-6"></span>
+        </h5>
+        <p class="card-text placeholder-glow">
+          <span class="placeholder col-7"></span>
+          <span class="placeholder col-4"></span>
+          <span class="placeholder col-4"></span>
+          <span class="placeholder col-6"></span>
+        </p>
+      </div>
+    </div>
+    <div v-else class="users-list-container">
       <div
         v-for="user in searchingUser.length ? searchingUser : users"
         :key="user._id"
@@ -71,7 +87,7 @@ export default {
           class="user-image"
           alt="user-image"
         />
-        <p class="m-0">{{ user.name }} {{ user.lastname }}</p>
+        <p class="m-0 text-center">{{ user.name }} {{ user.lastname }}</p>
       </div>
     </div>
   </div>
@@ -86,21 +102,24 @@ export default {
   gap: 1em;
   padding: 0.5em;
   overflow-x: scroll;
-  border-radius: 50px;
+  overflow-y: hidden;
+  border-radius: 10px;
+  width: 16em;
 }
 
 .users-list-container::-webkit-scrollbar {
-  width: 12px;
+  height: 12px;
 }
 
 .users-list-container::-webkit-scrollbar-track {
-  background: none;
+  background: #ccc;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
   border-radius: 10px;
 }
 
 .users-list-container::-webkit-scrollbar-thumb {
-  background: none;
   border-radius: 10px;
+  background: #252cc525;
 }
 
 .user-container {

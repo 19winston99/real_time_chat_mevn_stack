@@ -1,12 +1,4 @@
-salvare immagine profilo
-quando viene eliminato un utente, eliminare anche la foto dalla cartella
---------------------------------------
-schema validator per messages
-schema validator per users
-scehma validator per uersblocked
-
------------------------------------
-
+spinner
 aggiungere immagini per messaggi
-quando blocco utente nascondere input text
+----------------------------------------------------
 aggiungere real time (messaggi in realtime, funzionalità sta scrivendo, notifica quando utente va online e offline, provare a fare che se non sono sulla chat appaia la notifca nelle conversazioni)

@@ -8,6 +8,7 @@ export default {
     return {
       authUser: null,
       text: "",
+      image: '',
        emoticons: [
         "❤",
         "😀",

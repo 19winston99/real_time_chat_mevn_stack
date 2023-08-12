@@ -3,12 +3,12 @@ import mongoose from 'mongoose';
 const messageSchema = mongoose.Schema({
     sender_id: {
         type: String,
-        require: true,
+        required: true,
         ref: 'User',
     },
     recipient_id: {
         type: String,
-        require: true,
+        required: true,
         ref: 'User',
     },
     text: {
@@ -23,14 +23,14 @@ const messageSchema = mongoose.Schema({
 
 export const Message = mongoose.model('Message', messageSchema);
 
-/* 
-SCHEMA VALIDATOR
+
+/* SCHEMA VALIDATOR
 
 db.createCollection("messages", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ['sender_id', 'recipient_id],
+            required: ['sender_id', 'recipient_id'],
             properties: {
                 sender_id: {
                     bsonType: 'string',
@@ -49,4 +49,4 @@ db.createCollection("messages", {
             }
         }
     }
-}) */
+})  */

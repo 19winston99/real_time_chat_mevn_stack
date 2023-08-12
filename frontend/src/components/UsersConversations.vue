@@ -9,6 +9,7 @@ export default {
       conversations: [],
       user: null,
       usersBlocked: [],
+      loading: true,
     };
   },
   created() {
@@ -18,12 +19,14 @@ export default {
   },
   methods: {
     async getConversations() {
+      this.loading = true;
       try {
         const response = await axios.get(
           "/api/messages/conversations/" + this.user.id
         );
         if (response.data.status == "ok") {
           this.conversations = response.data.conversations;
+          this.loading = false;
         }
       } catch (error) {
         console.log(error);
@@ -94,7 +97,20 @@ export default {
 
 <template>
   <div class="conversation-container d-flex gap-1 flex-column">
-    <div
+       <div v-if="loading" class="card m-1" aria-hidden="true">
+      <div class="card-body">
+        <h5 class="card-title placeholder-glow">
+          <span class="placeholder col-6"></span>
+        </h5>
+        <p class="card-text placeholder-glow">
+          <span class="placeholder col-7"></span>
+          <span class="placeholder col-4"></span>
+          <span class="placeholder col-4"></span>
+          <span class="placeholder col-6"></span>
+        </p>
+      </div>
+    </div>
+    <div v-else
       class="d-flex justify-content-between align-items-center gap-1"
       v-for="conversation in conversations"
       :key="conversation._id"
@@ -128,7 +144,7 @@ export default {
   width: 21vw;
   border-radius: 10px;
   overflow-y: scroll;
-  height: 20em;
+  height: 19em;
 }
 
 .conversation-container::-webkit-scrollbar {
@@ -150,6 +166,7 @@ export default {
   border-radius: 10px;
   padding: 0.7em;
   border: 1px solid #ccc;
+  width: 10em;
 }
 
 .user-conversation:hover {

@@ -1,7 +1,6 @@
 <script>
-import axios from 'axios';
 export default {
-  props: ["messages"],
+  props: ["messages", 'loading'],
   emits: ["deleteMessage", 'updateMessage'],
   data() {
     return {
@@ -30,7 +29,25 @@ export default {
 
 <template>
   <div class="display-message mt-1">
+     <div v-if="loading" class="card" aria-hidden="true">
+      <div class="card-body">
+        <h5 class="card-title placeholder-glow">
+          <span class="placeholder col-6"></span>
+        </h5>
+        <p class="card-text placeholder-glow">
+          <span class="placeholder col-7"></span>
+          <span class="placeholder col-4"></span>
+          <span class="placeholder col-4"></span>
+          <span class="placeholder col-6"></span>
+          <span class="placeholder col-3"></span>
+          <span class="placeholder col-3"></span>
+          <span class="placeholder col-6"></span>
+          <span class="placeholder col-1"></span>
+        </p>
+      </div>
+    </div>
     <div
+    v-else
       v-for="message in messages"
       :key="message.id"
       :class="{

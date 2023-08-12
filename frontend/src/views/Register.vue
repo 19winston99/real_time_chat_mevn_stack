@@ -47,6 +47,11 @@ export default {
         !this.errorConfirmPassword &&
         !this.errorImage
       ) {
+        toast.loading('Uploading data...', {
+          pauseOnHover: false,
+          theme: 'dark',
+          transition: 'flip'
+        });
         this.animate = true;
         try {
           const formData = new FormData();
@@ -66,6 +71,7 @@ export default {
             this.password = "";
             this.confirmPassword = "";
             this.image = "";
+            toast.remove();
             this.$router.push("/login");
           }
         } catch (error) {

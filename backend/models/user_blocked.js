@@ -3,12 +3,12 @@ import mongoose from "mongoose";
 const userBlockedSchema = mongoose.Schema({
     blocking_user_id: {
         type: String,
-        require: true,
+        required: true,
         ref: 'User'
     },
     blocked_user_id: {
         type: String,
-        require: true,
+        required: true,
         ref: 'User'
     }
 }, { timestamps: true });
@@ -18,7 +18,7 @@ export const UserBlocked = mongoose.model('UserBlocked', userBlockedSchema);
 /* 
 SCHEMA VALIDATOR
 
-db.createCollection("users_blocked", {
+db.createCollection("userblockeds", {
     validator: {
         $jsonSchema: {
             bsonType: "object",

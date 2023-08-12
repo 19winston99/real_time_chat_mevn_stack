@@ -10,7 +10,7 @@ import authRoutes from './routes/auth.js';
 import messagesRoutes from './routes/messages.js';
 import usersBlockedRoutes from './routes/users_blocked.js';
 import { authenticateToken } from './middlewares/auth.js';
-import { upload } from './middlewares/imageUpload.js';
+import { uploadUsersImages, uploadMessagesImages } from './middlewares/imageUpload.js';
 
 const app = express();
 dotenv.config();
@@ -26,9 +26,9 @@ app.use(cors({
 }));
 
 //ROUTES
-app.use('/auth', upload.single('image'), authRoutes);
-app.use('/users', authenticateToken, usersRoutes);
-app.use('/messages', authenticateToken, messagesRoutes);
+app.use('/auth', uploadUsersImages.single('image'), authRoutes);
+app.use('/users', authenticateToken, uploadUsersImages.single('image'), usersRoutes);
+app.use('/messages', authenticateToken, uploadMessagesImages.single('image'), messagesRoutes);
 app.use('/usersBlocked', authenticateToken, usersBlockedRoutes);
 
 //CONNECT TO MONGO DB

@@ -67,7 +67,7 @@ export const insertMessage = async (req, res) => {
         sender_id: data.sender_id,
         recipient_id: data.recipient_id,
         text: data.text,
-        image: null
+        image: data.image
     })
     try {
         await message.save();
