@@ -31,7 +31,7 @@ export const getConversations = async (req, res) => {
     }
 
     try {
-        const conversations = await Message.find({ sender_id: mongoSanitize.sanitize(req.params.id) }).populate('recipient_id', 'name lastname email').select("recipient_id");
+        const conversations = await Message.find({ sender_id: mongoSanitize.sanitize(req.params.id) }).populate('recipient_id', 'name lastname email image').select("recipient_id");
         const uniqueRecipients = [];
 
         // Filter conversations for remove duplicate

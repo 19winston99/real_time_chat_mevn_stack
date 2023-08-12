@@ -100,10 +100,11 @@ export default {
       :key="conversation._id"
     >
       <div
-        class="user-conversation"
+        class="user-conversation d-flex align-items-center gap-2"
         @click="selectUser(conversation.recipient_id)"
         :class="{ 'blocked-user': isUserBlocked(conversation.recipient_id) }"
       >
+      <img :src="'images/users/' + conversation.recipient_id.image" class="user-image" alt="user-image">
         <p class="m-0">
           {{ conversation.recipient_id.name }}
           {{ conversation.recipient_id.lastname }}
@@ -159,5 +160,12 @@ export default {
 .blocked-user {
   opacity: 0.5; /* Riduci l'opacità per indicare che l'utente è bloccato */
   pointer-events: none; /* Impedisce interazioni con utenti bloccati */
+}
+
+.user-image {
+  width: 3em;
+  height: 3em;
+  border-radius: 100%;
+  object-fit: cover;
 }
 </style>

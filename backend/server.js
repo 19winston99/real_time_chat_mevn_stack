@@ -15,7 +15,6 @@ import { upload } from './middlewares/imageUpload.js';
 const app = express();
 dotenv.config();
 const PORT = process.env.PORT || 3000;
-app.use(express.static('../frontend/public'))
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
 app.use(helmet());

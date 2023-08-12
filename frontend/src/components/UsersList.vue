@@ -66,8 +66,12 @@ export default {
           'blocked-user': isUserBlocked(user),
         }"
       >
-        <p class="m-0">{{ user.name }}</p>
-        <p class="m-0">{{ user.lastname }}</p>
+        <img
+          :src="'images/users/' + user.image"
+          class="user-image"
+          alt="user-image"
+        />
+        <p class="m-0">{{ user.name }} {{ user.lastname }}</p>
       </div>
     </div>
   </div>
@@ -118,5 +122,12 @@ export default {
 .blocked-user {
   opacity: 0.5; /* Riduci l'opacità per indicare che l'utente è bloccato */
   pointer-events: none; /* Impedisce interazioni con utenti bloccati */
+}
+
+.user-image {
+  width: 3em;
+  height: 3em;
+  border-radius: 100%;
+  object-fit: cover;
 }
 </style>

@@ -110,6 +110,7 @@ export default {
     <div
       class="tag-current-user d-flex justify-content-center align-items-center gap-1 mt-1"
     >
+    <img :src="'images/users/' + currentUserSelected.image" alt="user-image" class="userSelected-image">
       <p class="m-0">{{ currentUserSelected.name }}</p>
       <p class="m-0">{{ currentUserSelected.lastname }}</p>
     </div>
@@ -147,6 +148,7 @@ export default {
   width: 16em;
   margin: 0 auto;
   border-radius: 10px;
+  padding: .3em;
 }
 
 .img-container {
@@ -155,5 +157,12 @@ export default {
 
 .text-container {
   height: 2em;
+}
+
+.userSelected-image {
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 100%;
+  object-fit: cover;
 }
 </style>
