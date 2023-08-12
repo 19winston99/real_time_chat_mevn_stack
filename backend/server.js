@@ -10,10 +10,12 @@ import authRoutes from './routes/auth.js';
 import messagesRoutes from './routes/messages.js';
 import usersBlockedRoutes from './routes/users_blocked.js';
 import { authenticateToken } from './middlewares/auth.js';
+import { upload } from './middlewares/imageUpload.js';
 
 const app = express();
 dotenv.config();
 const PORT = process.env.PORT || 3000;
+app.use(express.static('../frontend/public'))
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
 app.use(helmet());
@@ -25,7 +27,7 @@ app.use(cors({
 }));
 
 //ROUTES
-app.use('/auth', authRoutes);
+app.use('/auth', upload.single('image'), authRoutes);
 app.use('/users', authenticateToken, usersRoutes);
 app.use('/messages', authenticateToken, messagesRoutes);
 app.use('/usersBlocked', authenticateToken, usersBlockedRoutes);

@@ -49,13 +49,14 @@ export default {
       ) {
         this.animate = true;
         try {
-          const response = await axios.post("/api/auth/register", {
-            name: this.name,
-            lastname: this.lastname,
-            email: this.email,
-            password: this.password,
-            confirmPassword: this.confirmPassword,
-          });
+          const formData = new FormData();
+          formData.append('name', this.name);
+          formData.append('lastname', this.lastname);
+          formData.append('email', this.email);
+          formData.append('image', this.image);
+          formData.append('password', this.password);
+          formData.append('confirmPassword', this.confirmPassword);
+          const response = await axios.post("/api/auth/register", formData);
           if (response.data.status == "ok") {
             this.animate = false;
             this.$refs.inputFile.value = null;
@@ -80,7 +81,6 @@ export default {
     },
     onFileSelected(event) {
       this.image = event.target.files[0];
-      console.log(this.image);
     },
   },
 };

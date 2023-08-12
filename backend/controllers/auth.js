@@ -8,6 +8,7 @@ import validator from 'email-validator';
 export const register = async (req, res) => {
 
   const data = mongoSanitize.sanitize(req.body);
+  const file = mongoSanitize.sanitize(req.file);
 
   if (!data.name || typeof data.name !== 'string') {
     return res.status(400).json({ status: 'error', message: 'Name field invalid' });
@@ -25,6 +26,10 @@ export const register = async (req, res) => {
     return res.status(400).json({ status: 'error', message: 'Password field invalid' });
   }
 
+  if(!file) {
+    return res.status(400).json({status: 'error', message: 'Image field invalid'});
+  }
+
   if (data.password.length < 5) {
     return res.status(400).json({ status: 'error', message: 'Password must be at least 5 characters long' });
   }
@@ -39,6 +44,7 @@ export const register = async (req, res) => {
     lastname: data.lastname,
     email: data.email,
     password: passwordHashed,
+    image: file.filename
   });
 
   try {
@@ -67,7 +73,7 @@ export const login = async (req, res) => {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000 // 1 DAY
     });
-    return res.status(200).json({ status: 'ok', message: 'Login confirmed', user: { id: user._id, name: user.name, lastname: user.lastname, email: user.email } });
+    return res.status(200).json({ status: 'ok', message: 'Login confirmed', user: { id: user._id, name: user.name, lastname: user.lastname, email: user.email, image: user.image } });
   }
 
   res.status(401).json({ status: 'error', message: 'Email or password not valid' });

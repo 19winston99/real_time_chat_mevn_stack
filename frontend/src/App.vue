@@ -5,7 +5,7 @@ import { toast } from "vue3-toastify";
 import axios from "axios";
 export default {
   components: { Logout },
-  inject: ['eventBus'],
+  inject: ["eventBus"],
   data() {
     return {
       user: null,
@@ -75,7 +75,7 @@ export default {
             transition: "flip",
           });
           this.usersBlocked = this.usersBlocked.filter((el) => el._id !== id);
-          this.eventBus.emit('userUnlocked', id);
+          this.eventBus.emit("userUnlocked", id);
         }
       } catch (error) {
         toast.error("Something went wrong", {
@@ -94,9 +94,8 @@ export default {
       this.lastname = this.user.lastname;
       await this.getUsersBlocked();
     } else {
-      this.$router.push('/login')
+      this.$router.push("/login");
     }
-    await this.getUsersBlocked();
   },
   watch: {
     $route: {
@@ -129,6 +128,7 @@ export default {
       data-bs-theme="dark"
     >
       <div class="container-fluid" v-if="user != null">
+        <img :src="'images/users/' + user.image" class="user-image me-2" alt="user-image"/>
         <a class="navbar-brand">{{ user.name }} {{ user.lastname }}</a>
         <button
           class="navbar-toggler"
@@ -165,7 +165,7 @@ export default {
                 </li>
                 <li>
                   <button
-                  @click="getUsersBlocked"
+                    @click="getUsersBlocked"
                     type="button"
                     class="dropdown-item"
                     data-bs-toggle="modal"
@@ -306,5 +306,12 @@ export default {
 <style>
 .icon {
   font-size: 1.3em;
+}
+
+.user-image {
+  width: 3em;
+  height: 3em;
+  border-radius: 100%;
+  object-fit: cover;
 }
 </style>
