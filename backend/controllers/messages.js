@@ -59,15 +59,15 @@ export const insertMessage = async (req, res) => {
         return res.status(404).json({ status: 'error', message: 'Invalid user ID' });
     }
 
-    if (!data.text && !data.image) {
+    if (!data.text && !req.file) {
         return res.status(404).json({ status: 'error', message: 'At least one content is required' });
     }
 
     const message = new Message({
         sender_id: data.sender_id,
         recipient_id: data.recipient_id,
-        text: data.text,
-        image: data.image
+        text: data.text ?  data.text : null,
+        image: req.file ? mongoSanitize.sanitize(req.file.filename) : null,
     })
     try {
         await message.save();

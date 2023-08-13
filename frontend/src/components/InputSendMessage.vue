@@ -3,13 +3,13 @@ import axios from "axios";
 import { toast } from "vue3-toastify";
 export default {
   props: ["currentUserSelected"],
-  emits: ['messageSent'],
+  emits: ["messageSent"],
   data() {
     return {
       authUser: null,
       text: "",
-      image: '',
-       emoticons: [
+      image: null,
+      emoticons: [
         "❤",
         "😀",
         "😁",
@@ -108,21 +108,39 @@ export default {
   },
   methods: {
     async sendMessage() {
-      if (!this.text || !this.currentUserSelected || !this.authUser) return;
+      const loadingToast = toast.loading('Sending message...', {
+        pauseOnHover: false,
+        theme: 'dark',
+        transition: 'flip'
+      });
+      if (
+        !this.currentUserSelected ||
+        !this.authUser ||
+        (!this.text && !this.image)
+      )
+        return;
       try {
-        const response = await axios.post("/api/messages/", {
-          sender_id: this.authUser.id,
-          recipient_id: this.currentUserSelected._id,
-          text: this.text,
-        });
+        const formData = new FormData();
+        formData.append("sender_id", this.authUser.id);
+        formData.append("recipient_id", this.currentUserSelected._id);
+        if (this.text) {
+          formData.append("text", this.text);
+        }
+        if (this.image) {
+          formData.append("image", this.image);
+        }
+        const response = await axios.post("/api/messages/", formData);
         if (response.data.status == "ok") {
+          toast.remove(loadingToast);
           this.text = "";
+          this.image = null;
+          this.$refs.inputFile.value = null;
           toast.success("Message sent", {
             pauseOnHover: false,
             theme: "dark",
             transition: "flip",
           });
-          this.$emit('messageSent', response.data.message)
+          this.$emit("messageSent", response.data.message);
         }
       } catch (error) {
         console.log(error);
@@ -133,9 +151,12 @@ export default {
         });
       }
     },
-      insertEmoticon(emoticon, event) {
+    insertEmoticon(emoticon, event) {
       this.text += emoticon;
       event.stopPropagation();
+    },
+    onFileSelected(event) {
+      this.image = event.target.files[0];
     },
   },
   mounted() {
@@ -148,7 +169,7 @@ export default {
   <div
     class="d-flex justify-content-center align-items-center gap-1 send-message-container"
   >
-      <div class="btn-group dropup">
+    <div class="btn-group dropup">
       <button
         class="btn btn-sm btn-dark rounded-2 btn-sm dropdown-toggle"
         type="button"
@@ -175,6 +196,22 @@ export default {
       placeholder="Type here a message"
       @keydown.enter="sendMessage"
     />
+    <input
+      type="file"
+      @change="onFileSelected"
+      class="form-control form-control-sm d-none"
+      ref="inputFile"
+      @keydown.enter="sendMessage"
+    />
+    <button
+      :class="
+        image != null ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline-dark'
+      "
+      class="rounded-circle"
+      @click="$refs.inputFile.click()"
+    >
+      <i class="bi bi-images"></i>
+    </button>
     <button @click="sendMessage" class="btn btn-sm btn-dark rounded-circle">
       <i class="bi bi-send-fill"></i>
     </button>
@@ -215,5 +252,4 @@ export default {
   background: #252cc525;
   border-radius: 10px;
 }
-
 </style>

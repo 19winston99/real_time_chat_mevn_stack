@@ -60,7 +60,8 @@ export default {
       }"
     >
       <div v-if="message.image != null" class="d-flex align-items-center">
-        <img src="" alt="image" class="image" />
+        <img :src="'images/messages/' + message.image" alt="image" class="image" />
+        <button v-if="message.image != null && message.sender_id == user.id && message.text == null" class="btn btn-sm button" @click="emitDeleteMessage(message._id)"><i class="bi bi-trash trash"></i></button>
       </div>
       <div v-if="message.text != null" class="d-flex align-items-center">
         <p class="mt-1 mb-1 me-0 ms-0 text-message">{{ message.text }}</p>
