@@ -3,6 +3,7 @@ import { RouterLink, RouterView } from "vue-router";
 import Logout from "./components/Logout.vue";
 import { toast } from "vue3-toastify";
 import axios from "axios";
+import { io } from "socket.io-client";
 export default {
   components: { Logout },
   inject: ["eventBus"],
@@ -15,6 +16,7 @@ export default {
       errorLastname: "",
       errorName: "",
       usersBlocked: [],
+      socket: io("http://localhost:3000"),
     };
   },
   methods: {
@@ -107,6 +109,16 @@ export default {
     } else {
       this.$router.push("/login");
     }
+    this.socket.emit("newUser", this.user.name + " " + this.user.lastname);
+  },
+  created() {
+    this.socket.on("newUserNotification", (user) => {
+      toast.success(user + " is now online", {
+        pauseOnHover: false,
+        theme: "dark",
+        transition: "flip",
+      });
+    });
   },
   watch: {
     $route: {

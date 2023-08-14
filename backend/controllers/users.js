@@ -26,7 +26,7 @@ export const updateUser = async (req, res) => {
         if (req.file) {
             updateData.image = mongoSanitize.sanitize(req.file.filename);
         }
-        const user = await User.findByIdAndUpdate(req.params.id, mongoSanitize.sanitize(updateData), { new: true });
+        const user = await User.findByIdAndUpdate(req.params.id, mongoSanitize.sanitize(updateData), { new: true, runValidators: true });
         res.status(200).json({ status: 'ok', user: { id: user.id, name: user.name, lastname: user.lastname, email: user.email, image: user.image } });
     } catch (error) {
         res.status(400).json({ status: 'error', message: 'Something went wrong', devMessage: error.message });
