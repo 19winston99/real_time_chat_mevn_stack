@@ -2,6 +2,7 @@
 import { toast } from "vue3-toastify";
 import axios from "axios";
 export default {
+  inject: ['eventBus'],
   data() {
     return {
       email: "",
@@ -30,6 +31,7 @@ export default {
             this.email = "";
             this.password = "";
             sessionStorage.setItem("user", JSON.stringify(response.data.user));
+            this.eventBus.emit('emitNewUser', response.data.user);
             this.$router.push("/");
           }
         } catch (error) {

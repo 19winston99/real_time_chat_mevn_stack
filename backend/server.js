@@ -45,17 +45,14 @@ app.use('/usersBlocked', authenticateToken, usersBlockedRoutes);
 
 // Integrazione di Socket.IO
 io.on('connection', (socket) => {
-
-    socket.on("newUser", (user) => {
-        socket.emit('newUserNotification', user)
+    socket.on("newUserConnected", (user) => {
+        socket.broadcast.emit('newUserNotification', user);
     });
-    
-    // Gestisci vari eventi di socket qui
+
     socket.on('disconnect', () => {
-        console.log('Un utente disconnesso');
-    });
+        socket.disconnect();
+    })
 
-    // Gestione di altri eventi di socket...
 });
 
 //CONNECT TO MONGO DB

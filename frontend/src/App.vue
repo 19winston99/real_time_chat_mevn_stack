@@ -22,6 +22,8 @@ export default {
   methods: {
     confirmLogout() {
       this.user = null;
+      this.name = "";
+      this.lastname = "";
       this.$router.push("/login");
     },
     async updateUser() {
@@ -109,17 +111,23 @@ export default {
     } else {
       this.$router.push("/login");
     }
-    this.socket.emit("newUser", this.user.name + " " + this.user.lastname);
   },
   created() {
+    this.eventBus.on("emitNewUser", (user) => {
+      this.socket.emit("newUserConnected", user);
+    });
+
     this.socket.on("newUserNotification", (user) => {
-      toast.success(user + " is now online", {
-        pauseOnHover: false,
-        theme: "dark",
-        transition: "flip",
-      });
+      if (sessionStorage.getItem("user")) {
+        toast.success(user.name + " " + user.lastname + " is now online", {
+          pauseOnHover: false,
+          theme: "dark",
+          transition: "flip",
+        });
+      }
     });
   },
+
   watch: {
     $route: {
       handler(newValue, oldValue) {

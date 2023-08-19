@@ -20,18 +20,8 @@ export default {
     },
     setUsersBlocked(users) {
       this.usersBlocked = users;
-    }
+    },
   },
-  // watch: {
-  //   $route: {
-  //     handler(newValue, oldValue) {
-  //       if (sessionStorage.getItem("user")) {
-  //         this.user = JSON.parse(sessionStorage.getItem("user"));
-  //       }
-  //     },
-  //     deep: true, //detect changes in nested objects within sessionStorage
-  //   },
-  // },
 };
 </script>
 
@@ -40,8 +30,14 @@ export default {
     <div
       class="d-flex flex-column justify-content-center align-items-center users-container"
     >
-      <UsersList @userSelected="setUserChat" :usersBlocked="usersBlocked"></UsersList>
-      <Conversations @userSelected="setUserChat" @getUsersBlocked="setUsersBlocked"></Conversations>
+      <UsersList
+        @userSelected="setUserChat"
+        :usersBlocked="usersBlocked"
+      ></UsersList>
+      <Conversations
+        @userSelected="setUserChat"
+        @getUsersBlocked="setUsersBlocked"
+      ></Conversations>
     </div>
     <Chat :currentUserSelected="currentUserSelected"></Chat>
   </div>

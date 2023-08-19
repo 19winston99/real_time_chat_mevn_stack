@@ -1,6 +1,7 @@
 import { Message } from '../models/message.js';
 import mongoSanitize from 'express-mongo-sanitize';
 import { idValidator } from '../utils/mongoose-id-validator.js';
+// import {io} from '../server.js';
 
 //GET MESSAGES
 export const getMessages = async (req, res) => {
@@ -72,6 +73,7 @@ export const insertMessage = async (req, res) => {
     try {
         await message.save();
         res.status(201).json({ status: 'ok', message: message });
+        // io.broadcast.emit('newMessage', message);
     } catch (error) {
         res.status(404).json({ status: 'error', message: 'Something went wrong', devMessage: error.message });
     }
