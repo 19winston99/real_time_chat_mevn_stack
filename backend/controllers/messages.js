@@ -1,7 +1,7 @@
 import { Message } from '../models/message.js';
 import mongoSanitize from 'express-mongo-sanitize';
 import { idValidator } from '../utils/mongoose-id-validator.js';
-// import {io} from '../server.js';
+import { pusher } from '../server.js';
 
 //GET MESSAGES
 export const getMessages = async (req, res) => {
@@ -67,13 +67,16 @@ export const insertMessage = async (req, res) => {
     const message = new Message({
         sender_id: data.sender_id,
         recipient_id: data.recipient_id,
-        text: data.text ?  data.text : null,
+        text: data.text ? data.text : null,
         image: req.file ? mongoSanitize.sanitize(req.file.filename) : null,
     })
     try {
         await message.save();
+        const channelName = `conversation_${data.sender_id}_${data.recipient_id}`;
+        await pusher.trigger(channelName, "message", {
+            message: message
+        });
         res.status(201).json({ status: 'ok', message: message });
-        // io.broadcast.emit('newMessage', message);
     } catch (error) {
         res.status(404).json({ status: 'error', message: 'Something went wrong', devMessage: error.message });
     }

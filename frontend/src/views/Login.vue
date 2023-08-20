@@ -31,7 +31,7 @@ export default {
             this.email = "";
             this.password = "";
             sessionStorage.setItem("user", JSON.stringify(response.data.user));
-            this.eventBus.emit('emitNewUser', response.data.user);
+            // this.eventBus.emit('emitNewUser', response.data.user);
             this.$router.push("/");
           }
         } catch (error) {

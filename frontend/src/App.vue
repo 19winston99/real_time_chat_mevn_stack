@@ -3,7 +3,8 @@ import { RouterLink, RouterView } from "vue-router";
 import Logout from "./components/Logout.vue";
 import { toast } from "vue3-toastify";
 import axios from "axios";
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
+import Pusher from "pusher-js";
 export default {
   components: { Logout },
   inject: ["eventBus"],
@@ -16,7 +17,10 @@ export default {
       errorLastname: "",
       errorName: "",
       usersBlocked: [],
-      socket: io("http://localhost:3000"),
+      pusher: null,
+      channel: null,
+      currentUserId: null,
+      // socket: io("http://localhost:3000"),
     };
   },
   methods: {
@@ -107,25 +111,43 @@ export default {
       this.user = JSON.parse(sessionStorage.getItem("user")) || null;
       this.name = this.user.name;
       this.lastname = this.user.lastname;
+      // this.socket.on('connect', () => {
+      //   this.eventBus.emit('socketId', this.socket.id);
+      // })
       await this.getUsersBlocked();
     } else {
       this.$router.push("/login");
     }
+    this.pusher = new Pusher("ad7a2f78b1b8b3ce340c", {
+      cluster: "eu",
+    });
   },
   created() {
-    this.eventBus.on("emitNewUser", (user) => {
-      this.socket.emit("newUserConnected", user);
-    });
-
-    this.socket.on("newUserNotification", (user) => {
-      if (sessionStorage.getItem("user")) {
-        toast.success(user.name + " " + user.lastname + " is now online", {
-          pauseOnHover: false,
-          theme: "dark",
-          transition: "flip",
-        });
+    this.eventBus.on("currentUser", (user) => {
+      if(this.channel) {
+        this.pusher.unsubscribe(this.channel);
       }
+      this.currentUserId = user._id;
+      this.channel = this.pusher.subscribe(
+        "conversation_" + this.currentUserId + "_" + this.user.id
+      );
+      this.channel.bind("message", (data) => {
+        this.eventBus.emit("newMessage", data.message);
+      });
     });
+    //   this.eventBus.on("emitNewUser", (user) => {
+    //     this.socket.emit("newUserConnected", user);
+    //   });
+
+    //   this.socket.on("newUserNotification", (user) => {
+    //     if (sessionStorage.getItem("user")) {
+    //       toast.success(user.name + " " + user.lastname + " is now online", {
+    //         pauseOnHover: false,
+    //         theme: "dark",
+    //         transition: "flip",
+    //       });
+    //     }
+    //   });
   },
 
   watch: {

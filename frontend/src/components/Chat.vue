@@ -3,7 +3,7 @@ import SendMessage from "./InputSendMessage.vue";
 import MessagesContainer from "./MessagesContainer.vue";
 import axios from "axios";
 import { toast } from "vue3-toastify";
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
 export default {
   props: ["currentUserSelected"],
   inject: ["eventBus"],
@@ -19,7 +19,7 @@ export default {
       currentLetterIndex: 0,
       blockedUserId: null,
       loading: true,
-      socket: io("http://localhost:3000"),
+      // socket: io("http://localhost:3000"),
     };
   },
   methods: {
@@ -105,10 +105,13 @@ export default {
     this.eventBus.on("userUnlocked", (unlocked) => {
       this.blockedUserId = null;
     });
-
-    this.socket.on("newMessage", (message) => {
+    this.eventBus.on('newMessage', (message) => {
       this.messages.push(message);
-    });
+    })
+
+    // this.socket.on("newMessage", (message) => {
+    //   console.log(message);
+    // });
   },
   watch: {
     currentUserSelected: {

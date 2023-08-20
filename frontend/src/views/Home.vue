@@ -3,6 +3,7 @@ import UsersList from "../components/UsersList.vue";
 import Chat from "../components/Chat.vue";
 import Conversations from "../components/UsersConversations.vue";
 export default {
+  inject: ['eventBus'],
   components: {
     UsersList,
     Chat,
@@ -17,6 +18,7 @@ export default {
   methods: {
     setUserChat(user) {
       this.currentUserSelected = user;
+      this.eventBus.emit('currentUser', user);
     },
     setUsersBlocked(users) {
       this.usersBlocked = users;
